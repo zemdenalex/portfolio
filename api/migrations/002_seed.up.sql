@@ -125,33 +125,33 @@ ON CONFLICT (id) DO NOTHING;
 -- ITAM Landing blocks
 INSERT INTO content_blocks (id, project_id, type, sort_order, content) VALUES
 ('block-itam-1', 'proj-itam', 'TEXT', 0,
- '{"title_en": "Project Overview", "title_ru": "Обзор проекта", "body_en": "Built a production-grade university landing page with a Go backend following the Chi + pgx pattern. Features include bilingual content management, JWT-based admin panel, and server-side rendering for optimal SEO.", "body_ru": "Создан продакшн-лендинг для университета с Go-бэкендом по паттерну Chi + pgx. Включает двуязычное управление контентом, админ-панель на JWT и серверный рендеринг для SEO."}'),
+ '{"title_en": "Project Overview", "title_ru": "Обзор проекта", "text_en": "Built a production-grade university landing page with a Go backend following the Chi + pgx pattern. Features include bilingual content management, JWT-based admin panel, and server-side rendering for optimal SEO.", "text_ru": "Создан продакшн-лендинг для университета с Go-бэкендом по паттерну Chi + pgx. Включает двуязычное управление контентом, админ-панель на JWT и серверный рендеринг для SEO."}'),
 ('block-itam-2', 'proj-itam', 'METRICS', 1,
- '{"items": [{"label_en": "Lighthouse Score", "label_ru": "Оценка Lighthouse", "value": "98"}, {"label_en": "Dependencies", "label_ru": "Зависимости", "value": "6"}, {"label_en": "Load Time", "label_ru": "Время загрузки", "value": "<1s"}, {"label_en": "Languages", "label_ru": "Языки", "value": "EN/RU"}]}'),
+ '{"metrics": [{"label_en": "Lighthouse Score", "label_ru": "Оценка Lighthouse", "value": "98"}, {"label_en": "Dependencies", "label_ru": "Зависимости", "value": "6"}, {"label_en": "Load Time", "label_ru": "Время загрузки", "value": "<1s"}, {"label_en": "Languages", "label_ru": "Языки", "value": "EN/RU"}]}'),
 ('block-itam-3', 'proj-itam', 'CODE', 2,
  '{"language": "go", "title_en": "Chi Router Setup", "title_ru": "Настройка Chi роутера", "code": "r := chi.NewRouter()\nr.Use(middleware.Logger)\nr.Use(middleware.Recoverer)\nr.Route(\"/api\", func(r chi.Router) {\n    r.Get(\"/content\", h.ListContent)\n    r.Group(func(r chi.Router) {\n        r.Use(authMiddleware)\n        r.Put(\"/content/{key}\", h.UpdateContent)\n    })\n})"}'),
 
 -- NeuroBoost blocks
 ('block-neuro-1', 'proj-neuroboost', 'TEXT', 0,
- '{"title_en": "Minimal by Design", "title_ru": "Минимализм по замыслу", "body_en": "NeuroBoost was built as a challenge: create a full-featured productivity app with the fewest possible dependencies. The result uses just 5 packages — React, TypeScript, Tailwind, Zustand, and Vite — with zero runtime bloat.", "body_ru": "NeuroBoost создан как вызов: полнофункциональное приложение для продуктивности с минимумом зависимостей. Результат — всего 5 пакетов: React, TypeScript, Tailwind, Zustand и Vite — без лишнего в рантайме."}'),
+ '{"title_en": "Minimal by Design", "title_ru": "Минимализм по замыслу", "text_en": "NeuroBoost was built as a challenge: create a full-featured productivity app with the fewest possible dependencies. The result uses just 5 packages — React, TypeScript, Tailwind, Zustand, and Vite — with zero runtime bloat.", "text_ru": "NeuroBoost создан как вызов: полнофункциональное приложение для продуктивности с минимумом зависимостей. Результат — всего 5 пакетов: React, TypeScript, Tailwind, Zustand и Vite — без лишнего в рантайме."}'),
 ('block-neuro-2', 'proj-neuroboost', 'METRICS', 1,
- '{"items": [{"label_en": "Dependencies", "label_ru": "Зависимости", "value": "5"}, {"label_en": "Bundle Size", "label_ru": "Размер бандла", "value": "~45KB"}, {"label_en": "Features", "label_ru": "Функции", "value": "12+"}, {"label_en": "Build Time", "label_ru": "Время сборки", "value": "<3s"}]}'),
+ '{"metrics": [{"label_en": "Dependencies", "label_ru": "Зависимости", "value": "5"}, {"label_en": "Bundle Size", "label_ru": "Размер бандла", "value": "~45KB"}, {"label_en": "Features", "label_ru": "Функции", "value": "12+"}, {"label_en": "Build Time", "label_ru": "Время сборки", "value": "<3s"}]}'),
 
 -- 2211 Cosmetics blocks
 ('block-2211-1', 'proj-2211', 'TEXT', 0,
- '{"title_en": "E-commerce Enhancement", "title_ru": "Улучшение e-commerce", "body_en": "Worked with an established cosmetics brand to optimize their Shopify storefront. Implemented custom product filters, streamlined the checkout flow, and integrated analytics for conversion tracking.", "body_ru": "Работа с косметическим брендом по оптимизации Shopify-витрины. Реализованы кастомные фильтры, упрощена оплата и интегрирована аналитика для отслеживания конверсий."}'),
+ '{"title_en": "E-commerce Enhancement", "title_ru": "Улучшение e-commerce", "text_en": "Worked with an established cosmetics brand to optimize their Shopify storefront. Implemented custom product filters, streamlined the checkout flow, and integrated analytics for conversion tracking.", "text_ru": "Работа с косметическим брендом по оптимизации Shopify-витрины. Реализованы кастомные фильтры, упрощена оплата и интегрирована аналитика для отслеживания конверсий."}'),
 
 -- Stankiobruch blocks
 ('block-stankio-1', 'proj-stankio', 'TEXT', 0,
- '{"title_en": "Industrial Landing Page", "title_ru": "Промышленный лендинг", "body_en": "Designed and developed a conversion-focused landing page for an industrial equipment supplier. Emphasis on fast load times, clear product categorization, and prominent lead capture forms.", "body_ru": "Спроектирован и разработан конверсионный лендинг для поставщика промышленного оборудования. Акцент на быстрой загрузке, чёткой категоризации продукции и заметных формах захвата лидов."}'),
+ '{"title_en": "Industrial Landing Page", "title_ru": "Промышленный лендинг", "text_en": "Designed and developed a conversion-focused landing page for an industrial equipment supplier. Emphasis on fast load times, clear product categorization, and prominent lead capture forms.", "text_ru": "Спроектирован и разработан конверсионный лендинг для поставщика промышленного оборудования. Акцент на быстрой загрузке, чёткой категоризации продукции и заметных формах захвата лидов."}'),
 ('block-stankio-2', 'proj-stankio', 'METRICS', 1,
- '{"items": [{"label_en": "Page Speed", "label_ru": "Скорость страницы", "value": "95+"}, {"label_en": "Conversion Rate", "label_ru": "Конверсия", "value": "+40%"}, {"label_en": "Bounce Rate", "label_ru": "Отказы", "value": "-25%"}]}'),
+ '{"metrics": [{"label_en": "Page Speed", "label_ru": "Скорость страницы", "value": "95+"}, {"label_en": "Conversion Rate", "label_ru": "Конверсия", "value": "+40%"}, {"label_en": "Bounce Rate", "label_ru": "Отказы", "value": "-25%"}]}'),
 
 -- FlowTech blocks
 ('block-flow-1', 'proj-flowtech', 'TEXT', 0,
- '{"title_en": "Multi-Brand Architecture", "title_ru": "Мультибрендовая архитектура", "body_en": "Built a monorepo-based marketing site that supports multiple brand variants from shared components. Each variant gets its own color scheme, content, and deployment — but shares the same codebase.", "body_ru": "Создан маркетинговый сайт на базе монорепо с поддержкой нескольких вариантов бренда из общих компонентов. Каждый вариант имеет свою цветовую схему, контент и деплой — но использует общий код."}'),
+ '{"title_en": "Multi-Brand Architecture", "title_ru": "Мультибрендовая архитектура", "text_en": "Built a monorepo-based marketing site that supports multiple brand variants from shared components. Each variant gets its own color scheme, content, and deployment — but shares the same codebase.", "text_ru": "Создан маркетинговый сайт на базе монорепо с поддержкой нескольких вариантов бренда из общих компонентов. Каждый вариант имеет свою цветовую схему, контент и деплой — но использует общий код."}'),
 ('block-flow-2', 'proj-flowtech', 'METRICS', 1,
- '{"items": [{"label_en": "Brand Variants", "label_ru": "Вариантов бренда", "value": "3"}, {"label_en": "Shared Components", "label_ru": "Общих компонентов", "value": "25+"}, {"label_en": "Code Reuse", "label_ru": "Повторное использование", "value": "80%"}]}')
+ '{"metrics": [{"label_en": "Brand Variants", "label_ru": "Вариантов бренда", "value": "3"}, {"label_en": "Shared Components", "label_ru": "Общих компонентов", "value": "25+"}, {"label_en": "Code Reuse", "label_ru": "Повторное использование", "value": "80%"}]}')
 ON CONFLICT (id) DO NOTHING;
 
 -- ─── Quiz Tree ────────────────────────────────────────
