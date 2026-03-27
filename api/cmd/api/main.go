@@ -238,30 +238,47 @@ func main() {
 
 func runMigrations(db *database.DB) error {
 	// Find migrations directory relative to the binary or working directory
-	migrationPaths := []string{
-		"migrations/001_init.up.sql",
-		"../../migrations/001_init.up.sql",
+	migrationDirs := []string{
+		"migrations",
+		"../../migrations",
 	}
 
-	var sqlBytes []byte
-	var readErr error
-	for _, p := range migrationPaths {
-		sqlBytes, readErr = os.ReadFile(p)
-		if readErr == nil {
+	var migrDir string
+	for _, d := range migrationDirs {
+		if _, err := os.Stat(d); err == nil {
+			migrDir = d
 			break
 		}
 	}
-	if readErr != nil {
-		return fmt.Errorf("read migration file: %w", readErr)
+	if migrDir == "" {
+		return fmt.Errorf("migrations directory not found")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
-	_, err := db.Pool.Exec(ctx, string(sqlBytes))
+	entries, err := os.ReadDir(migrDir)
 	if err != nil {
-		// Migrations may fail on re-run due to "already exists" — that's expected
-		log.Printf("migration note (may be ok on re-run): %v", err)
+		return fmt.Errorf("read migrations dir: %w", err)
+	}
+
+	// Run all *.up.sql files in sorted order
+	for _, entry := range entries {
+		name := entry.Name()
+		if entry.IsDir() || len(name) < 7 || name[len(name)-7:] != ".up.sql" {
+			continue
+		}
+
+		sqlBytes, readErr := os.ReadFile(migrDir + "/" + name)
+		if readErr != nil {
+			return fmt.Errorf("read migration %s: %w", name, readErr)
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		_, execErr := db.Pool.Exec(ctx, string(sqlBytes))
+		cancel()
+		if execErr != nil {
+			log.Printf("migration %s note (may be ok on re-run): %v", name, execErr)
+		} else {
+			log.Printf("migration %s applied", name)
+		}
 	}
 
 	return nil
