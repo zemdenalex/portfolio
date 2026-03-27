@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "quiz": "Style Quiz",
+    "contact": "Contact"
+  },
+  "hero": {
+    "label": "Web Architect",
+    "title": "I design & build",
+    "titleAccent": "digital experiences",
+    "subtitle": "Websites, applications, Telegram bots — from initial blueprint to production deployment. Clean code, thoughtful design, on-time delivery.",
+    "ctaPrimary": "Take the Style Quiz",
+    "ctaSecondary": "View Portfolio"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Selected projects and case studies",
+    "filter": {
+      "all": "All",
+      "landing": "Landing Pages",
+      "corporate": "Corporate",
+      "store": "Online Stores",
+      "bot": "Telegram Bots",
+      "webapp": "Web Apps",
+      "api": "API / Backend",
+      "fixes": "Fixes"
+    },
+    "viewCase": "View Case Study",
+    "techStack": "Tech Stack",
+    "liveUrl": "Visit Live Site"
+  },
+  "quiz": {
+    "title": "Find Your Style",
+    "subtitle": "Answer a few questions and we'll recommend the perfect approach for your project",
+    "next": "Next",
+    "back": "Back",
+    "step": "Step {current} of {total}",
+    "contact": {
+      "title": "Almost done!",
+      "subtitle": "Leave your details and I'll get back to you within 24 hours",
+      "name": "Your name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "message": "Tell me more about your project (optional)",
+      "submit": "Get Your Recommendation"
+    },
+    "result": {
+      "title": "Your Recommended Style",
+      "subtitle": "Based on your answers, here's what I'd suggest",
+      "package": "Recommended Package",
+      "priceRange": "Price Range",
+      "delivery": "Estimated Delivery",
+      "days": "{count} days",
+      "features": "What's Included",
+      "examples": "Style Examples",
+      "cta": "Denis will contact you within 24 hours",
+      "startNew": "Take Quiz Again"
+    }
+  },
+  "cta": {
+    "title": "Not sure what you need?",
+    "subtitle": "Take our style quiz to discover the perfect approach for your project",
+    "button": "Start the Quiz"
+  },
+  "footer": {
+    "copyright": "© {year} Denis Zemtsov. All rights reserved.",
+    "builtWith": "Built with Next.js & Tailwind CSS"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "comfort": "Comfort Mode"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "notFound": "Page not found",
+    "backHome": "Back to Home"
+  }
+}

@@ -1,0 +1,34 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Go
+api/api.exe
+api/api
+api/uploads/*
+!api/uploads/.gitkeep
+
+# Node (app/ has its own .gitignore)
+
+# Docker
+*.log
+
+# Superpowers (brainstorm artifacts)
+.superpowers/brainstorm/
+
+# Claude local settings
+.claude/
+
+# Empty directories
+site/

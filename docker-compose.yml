@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio_secret
+      POSTGRES_DB: portfolio
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: portfolio
+      DB_PASSWORD: portfolio_secret
+      DB_NAME: portfolio
+      DB_SSLMODE: disable
+      JWT_SECRET: dev-secret-change-in-production-64-chars-minimum
+      JWT_EXPIRY: 720h
+      FRONTEND_URL: http://localhost:3000
+      UPLOAD_PATH: /data/uploads
+      ADMIN_EMAIL: denis@zemtsov.dev
+      ADMIN_PASSWORD: admin123
+      ADMIN_NAME: Denis Zemtsov
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  uploads:

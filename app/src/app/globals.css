@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* ─── Theme Variables ─────────────────────────────── */
+
+:root,
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --accent: #0891b2;
+  --accent-hover: #0e7490;
+  --accent-light: #ecfeff;
+  --accent-muted: rgba(8, 145, 178, 0.1);
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --shadow: rgba(0, 0, 0, 0.05);
+  --shadow-lg: rgba(0, 0, 0, 0.1);
+  --blueprint-line: rgba(8, 145, 178, 0.06);
+  --blueprint-dot: rgba(8, 145, 178, 0.1);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0c1929;
+  --bg-secondary: #111d2e;
+  --bg-tertiary: #162236;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #0891b2;
+  --accent-hover: #22d3ee;
+  --accent-light: #083344;
+  --accent-muted: rgba(8, 145, 178, 0.15);
+  --border: #1e3a5f;
+  --border-light: #162236;
+  --shadow: rgba(0, 0, 0, 0.2);
+  --shadow-lg: rgba(0, 0, 0, 0.4);
+  --blueprint-line: rgba(8, 145, 178, 0.03);
+  --blueprint-dot: rgba(8, 145, 178, 0.06);
+}
+
+/* ─── Comfort Mode ────────────────────────────────── */
+
+[data-comfort="on"] {
+  --font-size-base: 22px;
+  --line-height-base: 1.8;
+  --min-tap-target: 48px;
+}
+
+[data-comfort="on"] body {
+  font-size: var(--font-size-base) !important;
+  line-height: var(--line-height-base) !important;
+}
+
+[data-comfort="on"] button,
+[data-comfort="on"] a,
+[data-comfort="on"] [role="button"] {
+  min-height: var(--min-tap-target);
+  min-width: var(--min-tap-target);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Tailwind Theme Tokens ───────────────────────── */
+
+@theme inline {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+  --color-accent-muted: var(--accent-muted);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-shadow: var(--shadow);
+  --color-shadow-lg: var(--shadow-lg);
+  --color-blueprint-line: var(--blueprint-line);
+  --color-blueprint-dot: var(--blueprint-dot);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ─── Base Styles ─────────────────────────────────── */
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ─── Blueprint Grid Background ───────────────────── */
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.blueprint-grid-fine {
+  background-image:
+    linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ─── Selection & Focus ───────────────────────────── */
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Scrollbar ───────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ─── Hero Animations ────────────────────────────── */
+
+@keyframes hero-item {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-item {
+  opacity: 0;
+  animation: hero-item 0.5s ease-out forwards;
+}
+
+/* ─── Blueprint Wireframe Animations ─────────────── */
+
+@keyframes bp-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bp-draw {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 1000;
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-bp-fade-in {
+  opacity: 0;
+  animation: bp-fade-in 0.5s ease-out forwards;
+}
+
+.animate-bp-draw {
+  opacity: 0;
+  animation: bp-draw 0.8s ease-in-out forwards;
+}
+
+/* ─── Portfolio Grid Filter Animation ────────────── */
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: card-enter 0.2s ease-out forwards;
+}
+
+/* ─── Quiz Step Stagger Animation ───────────────── */
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-up {
+  opacity: 0;
+  animation: fade-slide-up 0.3s ease-out forwards;
+}

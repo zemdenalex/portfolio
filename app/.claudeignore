@@ -1,0 +1,11 @@
+node_modules/
+.next/
+ref/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.ico
+prisma/migrations/
