@@ -25,6 +25,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   function validate(): boolean {
     const newErrors: Record<string, boolean> = {};
@@ -40,11 +41,12 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
     if (!validate()) return;
 
     setSubmitting(true);
+    setSubmitError(false);
     try {
       await onSubmit({ name: name.trim(), email: email.trim(), phone: phone.trim(), message: message.trim() });
       setSubmitted(true);
     } catch {
-      // Error handled silently, button re-enables
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
     }
@@ -114,6 +116,12 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
           )}
         />
       </div>
+
+      {submitError && (
+        <p className="text-sm text-red-500 text-center">
+          {t("error")}
+        </p>
+      )}
 
       <Button
         type="submit"

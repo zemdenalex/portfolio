@@ -32,17 +32,15 @@ export default async function PortfolioPage({ params }: Props) {
   }
 
   return (
-    <main className="min-h-screen">
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="mb-12 text-center">
-          <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
-            {t("title")}
-          </h1>
-          <p className="text-lg text-text-secondary">{t("subtitle")}</p>
-        </div>
+    <section className="mx-auto min-h-screen max-w-6xl px-6 py-20">
+      <div className="mb-12 text-center">
+        <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
+          {t("title")}
+        </h1>
+        <p className="text-lg text-text-secondary">{t("subtitle")}</p>
+      </div>
 
-        <PortfolioGrid projects={projects} locale={locale} />
-      </section>
-    </main>
+      <PortfolioGrid projects={projects} locale={locale} />
+    </section>
   );
 }

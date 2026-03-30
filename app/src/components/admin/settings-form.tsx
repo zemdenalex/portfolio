@@ -13,7 +13,7 @@ export function SettingsForm() {
   const [profile, setProfile] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
-    api<{ name: string; email: string }>("/api/auth/profile")
+    api<{ name: string; email: string }>("/api/auth/me")
       .then(setProfile)
       .catch(() => {
         // Not authenticated or API error

@@ -33,22 +33,20 @@ export default async function QuizResultPage({ params, searchParams }: Props) {
 
   if (!styleId || !packageId) {
     return (
-      <main className="min-h-screen">
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-text-primary">
-            {t("title")}
-          </h1>
-          <p className="mb-8 text-text-secondary">
-            No quiz results found. Please take the quiz first.
-          </p>
-          <Button variant="accent" asChild>
-            <Link href="/quiz">
-              <RefreshCw className="h-4 w-4" />
-              {t("startNew")}
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <section className="mx-auto min-h-screen max-w-2xl px-6 py-20 text-center">
+        <h1 className="mb-3 text-3xl font-bold text-text-primary">
+          {t("title")}
+        </h1>
+        <p className="mb-8 text-text-secondary">
+          {t("noResults")}
+        </p>
+        <Button variant="accent" asChild>
+          <Link href="/quiz">
+            <RefreshCw className="h-4 w-4" />
+            {t("startNew")}
+          </Link>
+        </Button>
+      </section>
     );
   }
 
@@ -95,30 +93,26 @@ export default async function QuizResultPage({ params, searchParams }: Props) {
 
   if (!style || !pkg) {
     return (
-      <main className="min-h-screen">
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-text-primary">
-            {t("title")}
-          </h1>
-          <p className="mb-8 text-text-secondary">
-            Result data not found. Please try the quiz again.
-          </p>
-          <Button variant="accent" asChild>
-            <Link href="/quiz">
-              <RefreshCw className="h-4 w-4" />
-              {t("startNew")}
-            </Link>
-          </Button>
-        </section>
-      </main>
+      <section className="mx-auto min-h-screen max-w-2xl px-6 py-20 text-center">
+        <h1 className="mb-3 text-3xl font-bold text-text-primary">
+          {t("title")}
+        </h1>
+        <p className="mb-8 text-text-secondary">
+          {t("dataNotFound")}
+        </p>
+        <Button variant="accent" asChild>
+          <Link href="/quiz">
+            <RefreshCw className="h-4 w-4" />
+            {t("startNew")}
+          </Link>
+        </Button>
+      </section>
     );
   }
 
   return (
-    <main className="min-h-screen">
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <QuizResult style={style} pkg={pkg} locale={locale} />
-      </section>
-    </main>
+    <section className="mx-auto min-h-screen max-w-4xl px-6 py-20">
+      <QuizResult style={style} pkg={pkg} locale={locale} />
+    </section>
   );
 }

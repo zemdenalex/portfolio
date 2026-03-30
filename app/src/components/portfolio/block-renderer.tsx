@@ -67,12 +67,15 @@ function GalleryBlock({ content }: { content: BlockContent }) {
         ? images.map((src, i) => (
             <div
               key={i}
-              className="aspect-video rounded-lg border border-border bg-bg-tertiary"
+              className="aspect-video overflow-hidden rounded-lg border border-border bg-bg-tertiary"
             >
-              {/* Placeholder for images */}
-              <div className="flex h-full items-center justify-center text-text-muted text-sm">
-                Image {i + 1}
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={`Gallery image ${i + 1}`}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
             </div>
           ))
         : Array.from({ length: columns }).map((_, i) => (
@@ -177,7 +180,8 @@ function TestimonialBlock({
   content: BlockContent;
   locale: string;
 }) {
-  const text = getField(content, "text", locale);
+  // Editor saves as "quote", renderer also checks "text" for flexibility
+  const text = getField(content, "quote", locale) || getField(content, "text", locale);
   const author = getField(content, "author", locale);
   const role = getField(content, "role", locale);
 

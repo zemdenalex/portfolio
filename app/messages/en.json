@@ -27,6 +27,7 @@
       "fixes": "Fixes"
     },
     "viewCase": "View Case Study",
+    "empty": "No projects in this category yet.",
     "techStack": "Tech Stack",
     "liveUrl": "Visit Live Site"
   },
@@ -36,6 +37,7 @@
     "next": "Next",
     "back": "Back",
     "step": "Step {current} of {total}",
+    "setupMessage": "Quiz is being set up. Please check back soon.",
     "contact": {
       "title": "Almost done!",
       "subtitle": "Leave your details and I'll get back to you within 24 hours",
@@ -43,7 +45,8 @@
       "email": "Email",
       "phone": "Phone (optional)",
       "message": "Tell me more about your project (optional)",
-      "submit": "Get Your Recommendation"
+      "submit": "Get Your Recommendation",
+      "error": "Something went wrong. Please try again."
     },
     "result": {
       "title": "Your Recommended Style",
@@ -55,7 +58,9 @@
       "features": "What's Included",
       "examples": "Style Examples",
       "cta": "Denis will contact you within 24 hours",
-      "startNew": "Take Quiz Again"
+      "startNew": "Take Quiz Again",
+      "noResults": "No quiz results found. Please take the quiz first.",
+      "dataNotFound": "Result data not found. Please try the quiz again."
     }
   },
   "cta": {

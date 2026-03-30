@@ -71,8 +71,11 @@ function ContentRow({ entry }: { entry: ContentEntry }) {
     setDirty(valueEn !== entry.value_en || val !== entry.value_ru);
   }
 
+  const [error, setError] = useState(false);
+
   async function handleSave() {
     setLoading(true);
+    setError(false);
     try {
       await api(`/api/admin/content/${entry.key}`, {
         method: "PUT",
@@ -80,6 +83,8 @@ function ContentRow({ entry }: { entry: ContentEntry }) {
       });
       setDirty(false);
       router.refresh();
+    } catch {
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -109,15 +114,17 @@ function ContentRow({ entry }: { entry: ContentEntry }) {
               className="text-sm"
             />
           </div>
-          <Button
-            size="sm"
-            onClick={handleSave}
-            disabled={loading || !dirty}
-            variant={dirty ? "accent" : "outline"}
-            className="mt-1"
-          >
-            <Save className="h-3 w-3" />
-          </Button>
+          <div className="flex flex-col items-center gap-1 mt-1">
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={loading || !dirty}
+              variant={dirty ? "accent" : "outline"}
+            >
+              <Save className="h-3 w-3" />
+            </Button>
+            {error && <span className="text-xs text-red-500">Error</span>}
+          </div>
         </div>
       </CardContent>
     </Card>

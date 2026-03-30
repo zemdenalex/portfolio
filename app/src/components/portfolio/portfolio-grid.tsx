@@ -66,7 +66,7 @@ export function PortfolioGrid({ projects, locale }: PortfolioGridProps) {
 
       {filteredProjects.length === 0 && (
         <p className="mt-12 text-center text-text-muted">
-          No projects in this category yet.
+          {t("empty")}
         </p>
       )}
     </div>

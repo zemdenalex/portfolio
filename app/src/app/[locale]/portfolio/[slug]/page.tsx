@@ -60,8 +60,7 @@ export default async function ProjectPage({ params }: Props) {
   const blocks = project.blocks ?? [];
 
   return (
-    <main className="min-h-screen">
-      <article className="mx-auto max-w-4xl px-6 py-20">
+    <article className="mx-auto min-h-screen max-w-4xl px-6 py-20">
         {/* Back link */}
         <Link
           href="/portfolio"
@@ -122,7 +121,6 @@ export default async function ProjectPage({ params }: Props) {
             <BlockRenderer blocks={blocks} locale={locale} />
           </section>
         )}
-      </article>
-    </main>
+    </article>
   );
 }

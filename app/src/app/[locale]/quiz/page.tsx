@@ -56,36 +56,32 @@ export default async function QuizPage({ params }: Props) {
 
   if (!rootData?.node) {
     return (
-      <main className="min-h-screen">
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center">
-          <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
-            {t("title")}
-          </h1>
-          <p className="text-text-secondary">{t("subtitle")}</p>
-          <p className="mt-8 text-text-muted">
-            Quiz is being set up. Please check back soon.
-          </p>
-        </section>
-      </main>
+      <section className="mx-auto min-h-screen max-w-2xl px-6 py-20 text-center">
+        <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
+          {t("title")}
+        </h1>
+        <p className="text-text-secondary">{t("subtitle")}</p>
+        <p className="mt-8 text-text-muted">
+          {t("setupMessage")}
+        </p>
+      </section>
     );
   }
 
   return (
-    <main className="min-h-screen">
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <div className="mb-12 text-center">
-          <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
-            {t("title")}
-          </h1>
-          <p className="text-lg text-text-secondary">{t("subtitle")}</p>
-        </div>
+    <section className="mx-auto min-h-screen max-w-4xl px-6 py-20">
+      <div className="mb-12 text-center">
+        <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
+          {t("title")}
+        </h1>
+        <p className="text-lg text-text-secondary">{t("subtitle")}</p>
+      </div>
 
-        <QuizWizard
-          initialNode={rootData.node}
-          locale={locale}
-          estimatedSteps={rootData.estimated_steps}
-        />
-      </section>
-    </main>
+      <QuizWizard
+        initialNode={rootData.node}
+        locale={locale}
+        estimatedSteps={rootData.estimated_steps}
+      />
+    </section>
   );
 }
