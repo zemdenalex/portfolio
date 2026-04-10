@@ -6,13 +6,14 @@
 ## Project
 
 **Owner:** Denis Zemtsov | **Type:** Portfolio + CMS + Lead generation
-**Status:** Dev (Phase 1 MVP)
+**Status:** Deploy ready
+**URL:** https://archifex.space (pending VPS setup)
 
 ## Current Phase
 
-**Phase:** Dev — Phase 1 MVP core built (Go backend + Next.js frontend)
-**Next action:** Deploy (Vercel for frontend, VPS for Go API + PostgreSQL)
-**Blocked by:** Nothing — ready to deploy
+**Phase:** Deploy — deployment files created, code pushed to GitHub
+**Next action:** VPS setup (install Docker, clone repo, bootstrap SSL) — follow `docs/superpowers/plans/2026-04-11-deployment.md` Task 7
+**Blocked by:** VPS access (SSH connection)
 
 ## Design Spec
 
