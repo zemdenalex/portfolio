@@ -5,6 +5,17 @@
 
 set -e
 
+# Pre-flight checks
+if [ ! -f .env ]; then
+  echo "ERROR: .env file not found. Copy .env.example to .env and fill in values."
+  exit 1
+fi
+
+if ! command -v docker &> /dev/null; then
+  echo "ERROR: Docker is not installed."
+  exit 1
+fi
+
 DOMAIN="archifex.space"
 EMAIL="zemdenwork@gmail.com"
 COMPOSE="docker compose -f docker-compose.prod.yml"
