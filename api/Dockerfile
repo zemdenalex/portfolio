@@ -6,8 +6,9 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /api ./cmd/api
 
 FROM alpine:3.20
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates chromium
 COPY --from=builder /api /api
 COPY --from=builder /app/migrations /migrations
+ENV CHROME_PATH=/usr/bin/chromium-browser
 EXPOSE 8080
 CMD ["/api"]
