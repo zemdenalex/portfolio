@@ -6,8 +6,8 @@
     "contact": "Contact"
   },
   "hero": {
-    "label": "Web Architect",
-    "title": "I design & build",
+    "label": "Web Architecture Studio",
+    "title": "We design & build",
     "titleAccent": "digital experiences",
     "subtitle": "Websites, applications, Telegram bots — from initial blueprint to production deployment. Clean code, thoughtful design, on-time delivery.",
     "ctaPrimary": "Take the Style Quiz",
@@ -40,24 +40,24 @@
     "setupMessage": "Quiz is being set up. Please check back soon.",
     "contact": {
       "title": "Almost done!",
-      "subtitle": "Leave your details and I'll get back to you within 24 hours",
+      "subtitle": "Leave your details and our team will get back to you within 24 hours",
       "name": "Your name",
       "email": "Email",
       "phone": "Phone (optional)",
-      "message": "Tell me more about your project (optional)",
+      "message": "Tell us more about your project (optional)",
       "submit": "Get Your Recommendation",
       "error": "Something went wrong. Please try again."
     },
     "result": {
       "title": "Your Recommended Style",
-      "subtitle": "Based on your answers, here's what I'd suggest",
+      "subtitle": "Based on your answers, here's what we recommend",
       "package": "Recommended Package",
       "priceRange": "Price Range",
       "delivery": "Estimated Delivery",
       "days": "{count} days",
       "features": "What's Included",
       "examples": "Style Examples",
-      "cta": "Denis will contact you within 24 hours",
+      "cta": "Our team will contact you within 24 hours",
       "startNew": "Take Quiz Again",
       "noResults": "No quiz results found. Please take the quiz first.",
       "dataNotFound": "Result data not found. Please try the quiz again."
@@ -69,7 +69,7 @@
     "button": "Start the Quiz"
   },
   "footer": {
-    "copyright": "© {year} Denis Zemtsov. All rights reserved.",
+    "copyright": "© {year} Archifex. All rights reserved.",
     "builtWith": "Built with Next.js & Tailwind CSS"
   },
   "theme": {

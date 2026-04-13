@@ -15,11 +15,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Denis Zemtsov — Web Architect",
-    template: "%s | Denis Zemtsov",
+    default: "Archifex — Web Architecture Studio",
+    template: "%s | Archifex",
   },
   description:
-    "Full-stack web developer specializing in modern websites, applications, and Telegram bots. From blueprint to production.",
+    "We design and build modern websites, applications, and Telegram bots. From blueprint to production.",
   metadataBase: new URL(
     process.env.NEXTAUTH_URL ?? "http://localhost:3000",
   ),
