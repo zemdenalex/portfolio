@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dev.portfolio — Terminal</title>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', 'Monaco', 'Liberation Mono', 'Courier New', monospace;
+      background: #0a0a0f;
+      color: #c8c8d0;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: rgba(34, 197, 94, 0.25);
+      color: #fff;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0.875rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .nav-logo .prompt {
+      color: #22c55e;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.8125rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #22c55e;
+    }
+
+    .nav-links a::before {
+      content: './';
+      color: #444;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-content {
+      width: 100%;
+    }
+
+    .hero-terminal {
+      background: #12121a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+    }
+
+    .terminal-bar {
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #ff5f57; }
+    .terminal-dot.yellow { background: #febc2e; }
+    .terminal-dot.green { background: #28c840; }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    .terminal-body {
+      padding: 2rem;
+      font-size: 1rem;
+      min-height: 200px;
+    }
+
+    .terminal-line {
+      margin-bottom: 0.25rem;
+    }
+
+    .prompt-symbol {
+      color: #22c55e;
+      font-weight: 700;
+    }
+
+    .typing-text {
+      color: #fff;
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      font-weight: 600;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: #22c55e;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero-meta {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.875rem;
+      color: #555;
+    }
+
+    .hero-meta .value {
+      color: #c8c8d0;
+    }
+
+    .hero-meta .accent {
+      color: #22c55e;
+    }
+
+    /* About */
+    .about {
+      padding: 6rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-command {
+      font-size: 0.8125rem;
+      color: #555;
+      margin-bottom: 2rem;
+      font-weight: 400;
+    }
+
+    .section-command .prompt-symbol {
+      margin-right: 0.375rem;
+    }
+
+    .section-command .cmd {
+      color: #c8c8d0;
+    }
+
+    .about-text {
+      font-size: 1.0625rem;
+      color: #888;
+      line-height: 1.9;
+      max-width: 700px;
+    }
+
+    .about-text strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .about-text .highlight {
+      color: #22c55e;
+    }
+
+    /* Skills */
+    .skills {
+      padding: 4rem 2rem 6rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .skills-output {
+      margin-top: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .skill-item {
+      padding: 0.625rem 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .skill-item:hover {
+      border-color: rgba(34, 197, 94, 0.3);
+      background: rgba(34, 197, 94, 0.04);
+    }
+
+    .skill-item .dir {
+      color: #22c55e;
+    }
+
+    .skill-item .file {
+      color: #c8c8d0;
+    }
+
+    /* Projects */
+    .projects {
+      padding: 4rem 2rem 6rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .project-card {
+      background: #12121a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .project-card:hover {
+      border-color: rgba(34, 197, 94, 0.3);
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.06), 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .project-bar {
+      padding: 0.625rem 0.875rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .project-bar .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .project-bar .dot.red { background: #ff5f57; }
+    .project-bar .dot.yellow { background: #febc2e; }
+    .project-bar .dot.green { background: #28c840; }
+
+    .project-bar .title {
+      flex: 1;
+      text-align: center;
+      font-size: 0.6875rem;
+      color: #555;
+    }
+
+    .project-body {
+      padding: 1.5rem;
+    }
+
+    .project-body h3 {
+      font-size: 1rem;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-body p {
+      font-size: 0.8125rem;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+
+    .project-tag {
+      padding: 0.25rem 0.625rem;
+      background: rgba(34, 197, 94, 0.08);
+      color: #22c55e;
+      font-size: 0.6875rem;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .project-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+      color: #22c55e;
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .project-link:hover {
+      opacity: 0.8;
+    }
+
+    .project-link::before {
+      content: '$ ';
+      color: #444;
+    }
+
+    /* Experience */
+    .experience {
+      padding: 4rem 2rem 6rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .exp-list {
+      margin-top: 2rem;
+      list-style: none;
+    }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 2rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .exp-date {
+      font-size: 0.8125rem;
+      color: #555;
+      padding-top: 0.125rem;
+    }
+
+    .exp-content h3 {
+      font-size: 1rem;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .exp-content .company {
+      font-size: 0.8125rem;
+      color: #22c55e;
+      margin-bottom: 0.5rem;
+    }
+
+    .exp-content p {
+      font-size: 0.8125rem;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* Contact */
+    .contact {
+      padding: 6rem 2rem 8rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-terminal {
+      background: #12121a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 3rem 2rem;
+      max-width: 600px;
+      margin: 2rem auto 0;
+    }
+
+    .contact h2 {
+      font-size: 1.5rem;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .contact p {
+      font-size: 0.9375rem;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-block;
+      padding: 0.625rem 1.5rem;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+      text-decoration: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .contact-link:hover {
+      background: rgba(34, 197, 94, 0.1);
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #444;
+    }
+
+    footer .prompt-symbol {
+      margin-right: 0.25rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0a0f;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #222;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #333;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .terminal-body {
+        padding: 1.5rem;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .exp-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo"><span class="prompt">~</span>/dev.portfolio</a>
+      <ul class="nav-links">
+        <li><a href="#about">about</a></li>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#experience">experience</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green"></div>
+          <div class="terminal-title">zsh &mdash; 80x24</div>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line" style="color: #555; margin-bottom: 1rem;">Last login: Sat Apr 12 09:41:22 on ttys001</div>
+          <div class="terminal-line">
+            <span class="prompt-symbol">$</span>
+            <span class="typing-text" id="typingTarget"></span><span class="cursor" id="cursor"></span>
+          </div>
+          <div class="hero-meta">
+            <div><span class="prompt-symbol">$</span> cat info.json</div>
+            <div style="margin-top: 0.75rem; padding-left: 1rem;">
+              {<br>
+              &nbsp;&nbsp;<span class="accent">"name"</span>: <span class="value">"Alex Chen"</span>,<br>
+              &nbsp;&nbsp;<span class="accent">"role"</span>: <span class="value">"Full-Stack Developer"</span>,<br>
+              &nbsp;&nbsp;<span class="accent">"focus"</span>: <span class="value">["Go", "TypeScript", "Systems"]</span>,<br>
+              &nbsp;&nbsp;<span class="accent">"available"</span>: <span style="color: #22c55e;">true</span><br>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="section-command">
+      <span class="prompt-symbol">$</span> <span class="cmd">cat about.md</span>
+    </div>
+    <p class="about-text">
+      I build <strong>fast, reliable software</strong> that solves real problems. With <span class="highlight">6 years</span> of experience shipping production systems, I specialize in <strong>Go backends</strong>, <strong>React frontends</strong>, and the infrastructure that ties them together. I care about <span class="highlight">clean APIs</span>, thoughtful architecture, and writing code that other developers actually enjoy reading.
+    </p>
+  </section>
+
+  <section class="skills" id="skills">
+    <div class="section-command">
+      <span class="prompt-symbol">$</span> <span class="cmd">ls skills/</span>
+    </div>
+    <div class="skills-output">
+      <div class="skill-item"><span class="dir">languages/</span> <span class="file">Go</span></div>
+      <div class="skill-item"><span class="dir">languages/</span> <span class="file">TypeScript</span></div>
+      <div class="skill-item"><span class="dir">languages/</span> <span class="file">Python</span></div>
+      <div class="skill-item"><span class="dir">languages/</span> <span class="file">Rust</span></div>
+      <div class="skill-item"><span class="dir">frontend/</span> <span class="file">React</span></div>
+      <div class="skill-item"><span class="dir">frontend/</span> <span class="file">Next.js</span></div>
+      <div class="skill-item"><span class="dir">frontend/</span> <span class="file">Tailwind</span></div>
+      <div class="skill-item"><span class="dir">backend/</span> <span class="file">PostgreSQL</span></div>
+      <div class="skill-item"><span class="dir">backend/</span> <span class="file">Redis</span></div>
+      <div class="skill-item"><span class="dir">backend/</span> <span class="file">gRPC</span></div>
+      <div class="skill-item"><span class="dir">infra/</span> <span class="file">Docker</span></div>
+      <div class="skill-item"><span class="dir">infra/</span> <span class="file">Kubernetes</span></div>
+      <div class="skill-item"><span class="dir">infra/</span> <span class="file">CI/CD</span></div>
+      <div class="skill-item"><span class="dir">infra/</span> <span class="file">Linux</span></div>
+      <div class="skill-item"><span class="dir">tools/</span> <span class="file">Git</span></div>
+      <div class="skill-item"><span class="dir">tools/</span> <span class="file">Neovim</span></div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects">
+    <div class="section-command">
+      <span class="prompt-symbol">$</span> <span class="cmd">ls projects/ --detail</span>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-bar">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <div class="title">~/projects/nexus-api</div>
+        </div>
+        <div class="project-body">
+          <h3>Nexus API Gateway</h3>
+          <p>High-performance API gateway handling 50k+ requests/second. Built with Go, featuring rate limiting, circuit breaking, and real-time analytics.</p>
+          <div class="project-tags">
+            <span class="project-tag">Go</span>
+            <span class="project-tag">gRPC</span>
+            <span class="project-tag">Redis</span>
+            <span class="project-tag">Prometheus</span>
+          </div>
+          <a href="#" class="project-link">open repo</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-bar">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <div class="title">~/projects/flux-ui</div>
+        </div>
+        <div class="project-body">
+          <h3>Flux Design System</h3>
+          <p>Component library powering 12 internal apps. Accessible, themeable, and tree-shakeable. Built from scratch with zero runtime dependencies.</p>
+          <div class="project-tags">
+            <span class="project-tag">TypeScript</span>
+            <span class="project-tag">React</span>
+            <span class="project-tag">Storybook</span>
+          </div>
+          <a href="#" class="project-link">open repo</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-bar">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <div class="title">~/projects/terra-deploy</div>
+        </div>
+        <div class="project-body">
+          <h3>Terra Deploy</h3>
+          <p>GitOps deployment platform for Kubernetes clusters. Automated rollbacks, canary deployments, and Slack-integrated monitoring.</p>
+          <div class="project-tags">
+            <span class="project-tag">Go</span>
+            <span class="project-tag">Kubernetes</span>
+            <span class="project-tag">Terraform</span>
+          </div>
+          <a href="#" class="project-link">open repo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="experience" id="experience">
+    <div class="section-command">
+      <span class="prompt-symbol">$</span> <span class="cmd">git log --oneline career.md</span>
+    </div>
+    <ul class="exp-list">
+      <li class="exp-item">
+        <div class="exp-date">2024 - Present</div>
+        <div class="exp-content">
+          <h3>Senior Software Engineer</h3>
+          <div class="company">Stealth Startup</div>
+          <p>Leading backend architecture for a distributed data platform. Designed event-driven microservices handling 2M+ daily events with sub-100ms latency.</p>
+        </div>
+      </li>
+      <li class="exp-item">
+        <div class="exp-date">2022 - 2024</div>
+        <div class="exp-content">
+          <h3>Software Engineer</h3>
+          <div class="company">CloudScale Inc.</div>
+          <p>Built the core API layer serving 500k+ users. Reduced deployment time by 80% through a custom CI/CD pipeline and automated testing infrastructure.</p>
+        </div>
+      </li>
+      <li class="exp-item">
+        <div class="exp-date">2020 - 2022</div>
+        <div class="exp-content">
+          <h3>Full-Stack Developer</h3>
+          <div class="company">Agency Labs</div>
+          <p>Shipped 20+ client projects across fintech, healthcare, and e-commerce. Introduced Go to the team, reducing API response times by 60%.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="section-command">
+      <span class="prompt-symbol">$</span> <span class="cmd">open contact.sh</span>
+    </div>
+    <div class="contact-terminal">
+      <h2>Let's build something</h2>
+      <p>Currently open to interesting projects and full-time opportunities. Say hello.</p>
+      <div class="contact-links">
+        <a href="#" class="contact-link">GitHub</a>
+        <a href="#" class="contact-link">LinkedIn</a>
+        <a href="#" class="contact-link">Email</a>
+        <a href="#" class="contact-link">Twitter</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="prompt-symbol">$</span> echo "Built with HTML, CSS, and a little JS. No frameworks harmed."
+  </footer>
+
+  <script>
+    // Typing animation
+    (function() {
+      const phrases = [
+        'Hello, I\'m a developer.',
+        'I build things for the web.',
+        'I write clean, fast code.',
+        'Let\'s create something great.'
+      ];
+      const target = document.getElementById('typingTarget');
+      const cursorEl = document.getElementById('cursor');
+      let phraseIndex = 0;
+      let charIndex = 0;
+      let isDeleting = false;
+      let delay = 100;
+
+      function type() {
+        const currentPhrase = phrases[phraseIndex];
+
+        if (!isDeleting) {
+          target.textContent = currentPhrase.substring(0, charIndex + 1);
+          charIndex++;
+          delay = 70 + Math.random() * 50;
+
+          if (charIndex === currentPhrase.length) {
+            isDeleting = true;
+            delay = 2000;
+          }
+        } else {
+          target.textContent = currentPhrase.substring(0, charIndex - 1);
+          charIndex--;
+          delay = 35;
+
+          if (charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            delay = 500;
+          }
+        }
+
+        setTimeout(type, delay);
+      }
+
+      setTimeout(type, 800);
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design with Purpose — Swiss Typography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #111;
+      background: #fff;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #eee;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.125rem;
+      letter-spacing: -0.02em;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #111;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: #111;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero p {
+      font-size: clamp(1.125rem, 2vw, 1.375rem);
+      color: #666;
+      max-width: 540px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .hero-rule {
+      width: 64px;
+      height: 3px;
+      background: #111;
+      margin-top: 2.5rem;
+      border: none;
+    }
+
+    /* Manifesto */
+    .manifesto {
+      padding: 8rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .manifesto-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 1.5rem;
+    }
+
+    .manifesto h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+
+    .manifesto-text {
+      padding-top: 0.5rem;
+    }
+
+    .manifesto-text p {
+      font-size: 1.0625rem;
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Features */
+    .features {
+      padding: 6rem 2rem 8rem;
+      background: #fafafa;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+
+    .features-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 3rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid #eee;
+      padding: 2.5rem 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      font-size: 0.9375rem;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* Numbers */
+    .numbers {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .number-item .number {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .number-item .number-label {
+      font-size: 0.8125rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+
+    /* Testimonial */
+    .testimonial {
+      padding: 8rem 2rem;
+      background: #111;
+      color: #fff;
+    }
+
+    .testimonial-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .testimonial-quote {
+      font-size: clamp(1.25rem, 3vw, 2rem);
+      font-weight: 300;
+      line-height: 1.6;
+      letter-spacing: -0.01em;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .testimonial-quote::before {
+      content: "\201C";
+      font-size: 5rem;
+      position: absolute;
+      top: -2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #333;
+      line-height: 1;
+    }
+
+    .testimonial-author {
+      font-size: 0.875rem;
+      color: #999;
+      letter-spacing: 0.05em;
+    }
+
+    .testimonial-author strong {
+      color: #fff;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 8rem 2rem;
+      text-align: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .cta h2 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.125rem;
+      color: #666;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 3rem;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .cta-button:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #eee;
+      padding: 3rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left {
+      font-size: 0.8125rem;
+      color: #999;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.8125rem;
+      color: #999;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #111;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .manifesto-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .numbers-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3rem;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">SWISS.</a>
+      <ul class="nav-links">
+        <li><a href="#manifesto">Manifesto</a></li>
+        <li><a href="#features">Principles</a></li>
+        <li><a href="#testimonial">Voices</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Design with<br>Purpose</h1>
+      <p>Rooted in the Swiss tradition of clarity and precision. Every element serves a function. Nothing is arbitrary. The grid is the foundation. The type is the voice.</p>
+      <hr class="hero-rule">
+    </div>
+  </section>
+
+  <section class="manifesto fade-in" id="manifesto">
+    <div class="manifesto-grid">
+      <div>
+        <div class="manifesto-label">Our Manifesto</div>
+        <h2>Clarity is the highest form of design intelligence</h2>
+      </div>
+      <div class="manifesto-text">
+        <p>Swiss design emerged in the 1950s as a radical commitment to objectivity. It stripped away ornamentation and asked a simple question: does this element earn its place?</p>
+        <p>We carry that ethos forward. Our work honors the grid, respects the reader, and trusts in the power of restraint. The result is design that communicates with precision and endures beyond trends.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="features fade-in" id="features">
+    <div class="features-inner">
+      <div class="features-label">Core Principles</div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">&#9634;</span>
+          <h3>Grid Systems</h3>
+          <p>Mathematical precision guides every layout decision. The grid creates harmony between elements and gives content a clear visual hierarchy.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">&#9700;</span>
+          <h3>Objective Typography</h3>
+          <p>Type is treated as a structural element, not decoration. Clean sans-serifs at considered sizes create rhythm and readability.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">&#9711;</span>
+          <h3>Functional Minimalism</h3>
+          <p>Every element must justify its existence. Whitespace is not emptiness — it is an active compositional tool that directs attention.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="numbers fade-in">
+    <div class="numbers-grid">
+      <div class="number-item">
+        <div class="number">1957</div>
+        <div class="number-label">Founded</div>
+      </div>
+      <div class="number-item">
+        <div class="number">12</div>
+        <div class="number-label">Column Grid</div>
+      </div>
+      <div class="number-item">
+        <div class="number">&#8734;</div>
+        <div class="number-label">Whitespace</div>
+      </div>
+      <div class="number-item">
+        <div class="number">0</div>
+        <div class="number-label">Ornaments</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonial fade-in" id="testimonial">
+    <div class="testimonial-inner">
+      <p class="testimonial-quote">The grid system is an aid, not a guarantee. It permits a number of possible uses and each designer can look for a solution appropriate to his personal style.</p>
+      <div class="testimonial-author">
+        <strong>Josef Muller-Brockmann</strong>
+        Pioneer of Swiss Design
+      </div>
+    </div>
+  </section>
+
+  <section class="cta fade-in" id="contact">
+    <h2>Start with clarity</h2>
+    <p>Let purpose guide every pixel.</p>
+    <a href="#" class="cta-button">Get in Touch</a>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2026 SWISS. All rights reserved.</div>
+      <ul class="footer-links">
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Twitter</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // IntersectionObserver for fade-in animations
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+  </script>
+
+</body>
+</html>
