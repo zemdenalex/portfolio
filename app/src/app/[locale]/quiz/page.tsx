@@ -6,25 +6,22 @@ import { QuizWizard } from "@/components/quiz/quiz-wizard";
 
 export const dynamic = "force-dynamic";
 
-type QuizRootResponse = {
-  node: {
+type QuizNode = {
+  id: string;
+  type: "QUESTION" | "RESULT";
+  question_en: string | null;
+  question_ru: string | null;
+  options: {
     id: string;
-    type: "QUESTION" | "RESULT";
-    question_en: string | null;
-    question_ru: string | null;
-    options: {
-      id: string;
-      label_en: string;
-      label_ru: string;
-      next_node_id: string | null;
-      sort_order: number;
-    }[];
-    result: {
-      style_id: string;
-      package_id: string;
-    } | null;
+    label_en: string;
+    label_ru: string;
+    next_node_id: string | null;
+    sort_order: number;
+  }[];
+  result: {
+    style_id: string;
+    package_id: string;
   } | null;
-  estimated_steps: number;
 };
 
 type Props = {
@@ -47,14 +44,14 @@ export default async function QuizPage({ params }: Props) {
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
 
-  let rootData: QuizRootResponse | null = null;
+  let rootNode: QuizNode | null = null;
   try {
-    rootData = await serverApi<QuizRootResponse>("/api/public/quiz/root", cookieHeader);
+    rootNode = await serverApi<QuizNode>("/api/public/quiz/root", cookieHeader);
   } catch {
     // API unavailable
   }
 
-  if (!rootData?.node) {
+  if (!rootNode) {
     return (
       <section className="mx-auto min-h-screen max-w-2xl px-6 py-20 text-center">
         <h1 className="mb-3 text-4xl font-extrabold text-text-primary">
@@ -78,9 +75,9 @@ export default async function QuizPage({ params }: Props) {
       </div>
 
       <QuizWizard
-        initialNode={rootData.node}
+        initialNode={rootNode}
         locale={locale}
-        estimatedSteps={rootData.estimated_steps}
+        estimatedSteps={rootNode.options.length + 1}
       />
     </section>
   );
