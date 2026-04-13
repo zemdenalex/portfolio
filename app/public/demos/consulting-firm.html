@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ashford & Sterling | Strategic Consulting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #1a2332;
+      --navy-dark: #121a26;
+      --navy-light: #243044;
+      --gold: #c4a35a;
+      --gold-light: #d4b96e;
+      --gold-dim: rgba(196, 163, 90, 0.15);
+      --white: #ffffff;
+      --gray-100: #f7f7f5;
+      --gray-200: #edeae4;
+      --gray-400: #9a948a;
+      --gray-600: #6b6560;
+      --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--white);
+      color: var(--navy);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 4rem;
+      background: var(--navy);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.02em;
+    }
+    .nav-brand span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-contact {
+      padding: 0.6rem 1.75rem;
+      background: transparent;
+      border: 1.5px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-contact:hover {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--navy);
+      padding: 8rem 4rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy) 100%);
+      clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 650px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .hero-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    /* Services */
+    .services {
+      padding: 6rem 4rem;
+      background: var(--gray-100);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--gray-600);
+      font-size: 1rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .service-item {
+      background: var(--white);
+      padding: 2.5rem;
+      border: 1px solid var(--gray-200);
+      transition: transform 0.4s, box-shadow 0.4s;
+    }
+    .service-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(26, 35, 50, 0.08);
+    }
+
+    .service-icon {
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      color: var(--gold);
+    }
+
+    .service-item h3 {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--navy);
+    }
+
+    .service-item p { color: var(--gray-600); font-size: 0.92rem; line-height: 1.7; }
+
+    /* About / Stats */
+    .about {
+      padding: 6rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .about-text .section-eyebrow { text-align: left; }
+    .about-text .section-title { text-align: left; margin-bottom: 1.25rem; }
+    .about-text p {
+      color: var(--gray-600);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .about-stat {
+      background: var(--navy);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .about-stat-number {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .about-stat-label {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* Team */
+    .team {
+      padding: 6rem 4rem;
+      background: var(--gray-100);
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .team-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      padding: 2.5rem;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .team-card:hover { transform: translateY(-4px); }
+
+    .team-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--navy);
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      border: 2px solid var(--gold-dim);
+    }
+
+    .team-card h3 {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+
+    .team-card .role {
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    .team-card p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* FAQ */
+    .faq {
+      padding: 6rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-align: left;
+      transition: color 0.3s;
+    }
+    .faq-question:hover { color: var(--gold); }
+
+    .faq-icon {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+
+    .faq-item.active .faq-icon { transform: rotate(45deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+
+    .faq-answer-inner {
+      padding-bottom: 1.5rem;
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--navy);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer-brand {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .footer-brand span { color: var(--gold); }
+
+    footer p { font-size: 0.9rem; line-height: 1.7; }
+
+    .footer-heading {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 0.6rem; }
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.5);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 3rem auto 0;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 5rem 1.5rem 4rem; }
+      .hero::after { display: none; }
+      section, .services, .team, .faq { padding: 4rem 1.5rem; }
+      .about { grid-template-columns: 1fr; gap: 2rem; padding: 4rem 1.5rem; }
+      .footer-content { grid-template-columns: 1fr; }
+      footer { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">Ashford <span>&</span> Sterling</div>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#team">Leadership</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <button class="nav-contact">Contact Us</button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Est. 1987</div>
+      <h1>Strategic Counsel for an Evolving World</h1>
+      <p>For nearly four decades, we have guided enterprises through their most consequential decisions, delivering clarity where complexity reigns.</p>
+      <button class="hero-btn">Schedule a Consultation</button>
+    </div>
+  </section>
+
+  <section class="services reveal" id="services">
+    <div class="section-header">
+      <div class="section-eyebrow">Our Practice</div>
+      <h2 class="section-title">Areas of Expertise</h2>
+      <p class="section-desc">We bring deep sector knowledge and a proven methodology to every engagement.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-item">
+        <div class="service-icon">&#9878;</div>
+        <h3>Corporate Strategy</h3>
+        <p>Market entry analysis, competitive positioning, and long-term growth planning for boards and C-suite leaders.</p>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">&#9733;</div>
+        <h3>Mergers & Acquisitions</h3>
+        <p>End-to-end advisory from target identification through post-merger integration and value realization.</p>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">&#9881;</div>
+        <h3>Operational Excellence</h3>
+        <p>Process optimization, cost transformation, and supply chain redesign that delivers measurable impact.</p>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">&#8962;</div>
+        <h3>Digital Transformation</h3>
+        <p>Technology roadmaps, data strategy, and organizational change management for the digital era.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about reveal" id="about">
+    <div class="about-text">
+      <div class="section-eyebrow">Who We Are</div>
+      <h2 class="section-title">Trusted by Industry Leaders</h2>
+      <p>Ashford & Sterling is an independent consultancy trusted by Fortune 500 companies, sovereign funds, and family enterprises across 40 countries. Our partners bring an average of 22 years of senior advisory experience.</p>
+      <p>We believe in rigorous analysis, candid advice, and lasting partnerships built on results, not billable hours.</p>
+    </div>
+    <div class="about-stats">
+      <div class="about-stat">
+        <div class="about-stat-number">37</div>
+        <div class="about-stat-label">Years of Excellence</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-number">450+</div>
+        <div class="about-stat-label">Engagements</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-number">40</div>
+        <div class="about-stat-label">Countries Served</div>
+      </div>
+      <div class="about-stat">
+        <div class="about-stat-number">96%</div>
+        <div class="about-stat-label">Client Retention</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="team reveal" id="team">
+    <div class="section-header">
+      <div class="section-eyebrow">Leadership</div>
+      <h2 class="section-title">Our Senior Partners</h2>
+      <p class="section-desc">Seasoned leaders with deep expertise across industries and geographies.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">RA</div>
+        <h3>Richard Ashford</h3>
+        <div class="role">Managing Partner</div>
+        <p>30 years in corporate strategy. Former McKinsey partner. Harvard MBA. Leads our governance and M&A practice.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">ES</div>
+        <h3>Eleanor Sterling</h3>
+        <div class="role">Senior Partner</div>
+        <p>Expert in operational transformation. Led restructuring for 12 FTSE 100 companies. Oxford PPE graduate.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">JW</div>
+        <h3>James Whitfield</h3>
+        <div class="role">Partner, Digital</div>
+        <p>20 years in technology strategy. Former CTO of a Fortune 500 firm. Leads digital transformation engagements.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq reveal" id="faq">
+    <div class="section-header">
+      <div class="section-eyebrow">Common Questions</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">
+          What types of organizations do you work with?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">We serve Fortune 500 corporations, mid-market enterprises, sovereign wealth funds, and family-owned businesses. Our clients span financial services, manufacturing, technology, healthcare, and energy sectors across 40 countries.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          How does a typical engagement begin?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Every engagement starts with a confidential diagnostic phase where we assess your situation, define objectives, and propose a tailored work plan. This ensures alignment before any significant investment of time or resources.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          What sets Ashford & Sterling apart from larger firms?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Our senior partners work directly on every engagement, not junior consultants. We offer the analytical rigor of a major firm with the personal attention and accountability of a boutique practice. Our 96% client retention rate speaks for itself.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          How are your fees structured?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">We offer both fixed-fee and value-based pricing depending on the engagement type. We believe in transparent pricing with no hidden costs. For M&A advisory, we typically include a success fee component aligned with deal outcomes.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">
+          Do you offer ongoing advisory relationships?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">Yes. Many of our clients retain us on an ongoing basis for board advisory, strategy reviews, and critical decision support. These relationships provide continuity and deep institutional knowledge that enhances the quality of our counsel.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div>
+        <div class="footer-brand">Ashford <span>&</span> Sterling</div>
+        <p>Independent strategic consultancy advising enterprises on their most consequential decisions since 1987.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Practice Areas</div>
+        <ul class="footer-links">
+          <li><a href="#">Corporate Strategy</a></li>
+          <li><a href="#">Mergers & Acquisitions</a></li>
+          <li><a href="#">Operational Excellence</a></li>
+          <li><a href="#">Digital Transformation</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="#">London (HQ)</a></li>
+          <li><a href="#">New York</a></li>
+          <li><a href="#">Singapore</a></li>
+          <li><a href="#">enquiries@ashfordsterling.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Ashford & Sterling LLP. All rights reserved.</div>
+  </footer>
+
+  <script>
+    /* Reveal on scroll */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* FAQ Accordion */
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const answer = item.querySelector('.faq-answer');
+        const inner = answer.querySelector('.faq-answer-inner');
+        const isActive = item.classList.contains('active');
+
+        /* Close all */
+        document.querySelectorAll('.faq-item').forEach(faq => {
+          faq.classList.remove('active');
+          faq.querySelector('.faq-answer').style.maxHeight = '0';
+        });
+
+        /* Open clicked (if wasn't active) */
+        if (!isActive) {
+          item.classList.add('active');
+          answer.style.maxHeight = inner.scrollHeight + 24 + 'px';
+        }
+      });
+    });
+
+    /* Smooth scroll for nav links */
+    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
