@@ -62,6 +62,8 @@ export default async function QuizResultPage({ params, searchParams }: Props) {
       label_en: string;
       label_ru: string;
       type: string;
+      screenshot_url: string | null;
+      embeddable: boolean;
     }[];
   };
 
