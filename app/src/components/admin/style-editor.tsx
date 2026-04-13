@@ -22,6 +22,9 @@ import {
   ChevronRight,
   ExternalLink,
   Palette,
+  Camera,
+  Loader2,
+  Image as ImageIcon,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────
@@ -35,6 +38,8 @@ type StyleRefData = {
   label_ru: string;
   type: string;
   sort_order: number;
+  screenshot_url: string | null;
+  embeddable: boolean;
 };
 
 type StyleData = {
@@ -252,6 +257,93 @@ function StyleCard({ style }: { style: StyleData }) {
   );
 }
 
+// ─── Ref Row ────────────────────────────────────────
+
+function RefRow({
+  ref_,
+  styleId,
+  onDelete,
+  loading: parentLoading,
+}: {
+  ref_: StyleRefData;
+  styleId: string;
+  onDelete: (id: string) => void;
+  loading: boolean;
+}) {
+  const router = useRouter();
+  const [capturing, setCapturing] = useState(false);
+
+  async function handleCapture() {
+    setCapturing(true);
+    try {
+      await api("/api/admin/screenshot", {
+        method: "POST",
+        body: JSON.stringify({
+          url: ref_.url,
+          reference_id: ref_.id,
+        }),
+      });
+      router.refresh();
+    } finally {
+      setCapturing(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      {ref_.screenshot_url ? (
+        <img
+          src={ref_.screenshot_url}
+          alt=""
+          className="h-8 w-12 rounded border border-border object-cover object-top shrink-0"
+        />
+      ) : (
+        <div className="flex h-8 w-12 items-center justify-center rounded border border-border bg-bg-tertiary shrink-0">
+          <ImageIcon className="h-3 w-3 text-text-muted" />
+        </div>
+      )}
+      <Badge variant="outline" className="text-xs shrink-0">
+        {ref_.type}
+      </Badge>
+      {ref_.embeddable && (
+        <Badge className="text-xs shrink-0 bg-green-500/10 text-green-600">
+          iframe
+        </Badge>
+      )}
+      <a
+        href={ref_.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-accent hover:underline flex items-center gap-1 flex-1 truncate"
+      >
+        {ref_.label_en}
+        <ExternalLink className="h-3 w-3 shrink-0" />
+      </a>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={handleCapture}
+        disabled={capturing}
+        title="Capture screenshot"
+      >
+        {capturing ? (
+          <Loader2 className="h-3 w-3 animate-spin" />
+        ) : (
+          <Camera className="h-3 w-3" />
+        )}
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onDelete(ref_.id)}
+        disabled={parentLoading}
+      >
+        <Trash2 className="h-3 w-3 text-red-500" />
+      </Button>
+    </div>
+  );
+}
+
 // ─── References Editor ───────────────────────────────
 
 const REF_TYPES: RefType[] = ["OWN_PROJECT", "DEMO", "EXTERNAL"];
@@ -321,31 +413,13 @@ function ReferencesEditor({
       {[...references]
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((ref) => (
-          <div key={ref.id} className="flex items-center gap-2 text-sm">
-            <Badge variant="outline" className="text-xs shrink-0">
-              {ref.type}
-            </Badge>
-            <a
-              href={ref.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent hover:underline flex items-center gap-1 flex-1 truncate"
-            >
-              {ref.label_en}
-              <ExternalLink className="h-3 w-3 shrink-0" />
-            </a>
-            {ref.label_ru && (
-              <span className="text-text-muted text-xs">/ {ref.label_ru}</span>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeleteRef(ref.id)}
-              disabled={loading}
-            >
-              <Trash2 className="h-3 w-3 text-red-500" />
-            </Button>
-          </div>
+          <RefRow
+            key={ref.id}
+            ref_={ref}
+            styleId={styleId}
+            onDelete={handleDeleteRef}
+            loading={loading}
+          />
         ))}
 
       {showAdd && (

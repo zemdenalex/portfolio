@@ -11,6 +11,8 @@ type StyleRefData = {
   label_ru: string;
   type: string;
   sort_order: number;
+  screenshot_url: string | null;
+  embeddable: boolean;
 };
 
 type StyleData = {
