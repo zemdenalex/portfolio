@@ -24,6 +24,7 @@ import (
 	"portfolio-api/internal/portfolio"
 	"portfolio-api/internal/quiz"
 	"portfolio-api/internal/response"
+	"portfolio-api/internal/screenshot"
 	"portfolio-api/internal/styles"
 	"portfolio-api/internal/upload"
 )
@@ -65,6 +66,8 @@ func main() {
 	packagesHandler := packages.NewHandler(packagesService)
 	contentHandler := content.NewHandler(contentService)
 	uploadHandler := upload.NewHandler(cfg.Upload.Path, cfg.Upload.MaxSize)
+	screenshotService := screenshot.NewService(cfg.Upload.Path)
+	screenshotHandler := screenshot.NewHandler(screenshotService, stylesService)
 
 	// 6. Seed admin user
 	if err := authService.SeedAdmin(context.Background(), cfg.Admin.Email, cfg.Admin.Password, cfg.Admin.Name); err != nil {
@@ -168,6 +171,9 @@ func main() {
 
 				// Upload
 				r.Post("/upload", uploadHandler.Upload)
+
+				// Screenshot
+				r.Post("/screenshot", screenshotHandler.Capture)
 
 				// Portfolio
 				r.Get("/portfolio", portfolioHandler.ListAll)
