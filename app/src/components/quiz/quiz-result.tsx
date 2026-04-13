@@ -9,11 +9,11 @@ import { formatPrice } from "@/lib/utils";
 import {
   CheckCircle,
   RefreshCw,
-  ExternalLink,
   Package,
   Clock,
   DollarSign,
 } from "lucide-react";
+import { BrowserPreview } from "@/components/ui/browser-preview";
 
 type StyleData = {
   id: string;
@@ -27,6 +27,8 @@ type StyleData = {
     label_en: string;
     label_ru: string;
     type: string;
+    screenshot_url: string | null;
+    embeddable: boolean;
   }[];
 };
 
@@ -83,36 +85,21 @@ export function QuizResult({ style, pkg, locale }: QuizResultProps) {
           <h2 className="mb-4 text-xl font-semibold text-text-primary">
             {t("examples")}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-6">
             {style.references.map((ref) => {
               const refLabel = locale === "ru" ? ref.label_ru : ref.label_en;
               return (
-                <Card key={ref.id} className="overflow-hidden">
-                  <div className="aspect-video bg-bg-tertiary">
-                    <iframe
-                      src={ref.url}
-                      title={refLabel}
-                      className="h-full w-full"
-                      loading="lazy"
-                      sandbox="allow-scripts allow-same-origin"
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-text-primary">
-                        {refLabel}
-                      </span>
-                      <a
-                        href={ref.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent hover:text-accent-hover"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div key={ref.id}>
+                  <BrowserPreview
+                    url={ref.url}
+                    label={refLabel}
+                    screenshotUrl={ref.screenshot_url}
+                    embeddable={ref.embeddable}
+                  />
+                  <p className="mt-2 text-sm font-medium text-text-secondary">
+                    {refLabel}
+                  </p>
+                </div>
               );
             })}
           </div>
