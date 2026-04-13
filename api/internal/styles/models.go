@@ -24,8 +24,10 @@ type StyleReference struct {
 	URL       string `json:"url"`
 	LabelEn   string `json:"label_en"`
 	LabelRu   string `json:"label_ru"`
-	Type      string `json:"type"`
-	SortOrder int    `json:"sort_order"`
+	Type          string  `json:"type"`
+	SortOrder     int     `json:"sort_order"`
+	ScreenshotURL *string `json:"screenshot_url"`
+	Embeddable    bool    `json:"embeddable"`
 }
 
 type StyleWithRefs struct {

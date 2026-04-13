@@ -116,9 +116,9 @@ func (s *Service) CreateRef(ctx context.Context, req *CreateRefRequest) (*StyleR
 	err := s.db.QueryRow(ctx,
 		`INSERT INTO style_references (style_id, url, label_en, label_ru, type, sort_order)
 		 VALUES ($1, $2, $3, $4, $5, COALESCE((SELECT MAX(sort_order) + 1 FROM style_references WHERE style_id = $1), 0))
-		 RETURNING id, style_id, url, label_en, label_ru, type, sort_order`,
+		 RETURNING id, style_id, url, label_en, label_ru, type, sort_order, screenshot_url, embeddable`,
 		req.StyleID, req.URL, req.LabelEn, req.LabelRu, req.Type,
-	).Scan(&ref.ID, &ref.StyleID, &ref.URL, &ref.LabelEn, &ref.LabelRu, &ref.Type, &ref.SortOrder)
+	).Scan(&ref.ID, &ref.StyleID, &ref.URL, &ref.LabelEn, &ref.LabelRu, &ref.Type, &ref.SortOrder, &ref.ScreenshotURL, &ref.Embeddable)
 	if err != nil {
 		return nil, fmt.Errorf("create ref: %w", err)
 	}
@@ -157,9 +157,23 @@ func (s *Service) ReorderRefs(ctx context.Context, styleID string, orderedIDs []
 	return tx.Commit(ctx)
 }
 
+func (s *Service) UpdateRefScreenshot(ctx context.Context, refID string, screenshotURL string, embeddable bool) error {
+	tag, err := s.db.Exec(ctx,
+		"UPDATE style_references SET screenshot_url = $2, embeddable = $3 WHERE id = $1",
+		refID, screenshotURL, embeddable,
+	)
+	if err != nil {
+		return fmt.Errorf("update ref screenshot: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrRefNotFound
+	}
+	return nil
+}
+
 func (s *Service) getRefs(ctx context.Context, styleID string) ([]StyleReference, error) {
 	rows, err := s.db.Query(ctx,
-		"SELECT id, style_id, url, label_en, label_ru, type, sort_order FROM style_references WHERE style_id = $1 ORDER BY sort_order",
+		"SELECT id, style_id, url, label_en, label_ru, type, sort_order, screenshot_url, embeddable FROM style_references WHERE style_id = $1 ORDER BY sort_order",
 		styleID,
 	)
 	if err != nil {
@@ -170,7 +184,7 @@ func (s *Service) getRefs(ctx context.Context, styleID string) ([]StyleReference
 	var refs []StyleReference
 	for rows.Next() {
 		var ref StyleReference
-		if err := rows.Scan(&ref.ID, &ref.StyleID, &ref.URL, &ref.LabelEn, &ref.LabelRu, &ref.Type, &ref.SortOrder); err != nil {
+		if err := rows.Scan(&ref.ID, &ref.StyleID, &ref.URL, &ref.LabelEn, &ref.LabelRu, &ref.Type, &ref.SortOrder, &ref.ScreenshotURL, &ref.Embeddable); err != nil {
 			return nil, fmt.Errorf("scan ref: %w", err)
 		}
 		refs = append(refs, ref)
