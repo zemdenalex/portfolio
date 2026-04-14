@@ -98,6 +98,7 @@ export default function LogoRatingPage() {
   const [pair, setPair] = useState<[number, number] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showIntro, setShowIntro] = useState(false);
 
   /* --- Session bootstrap --- */
 
@@ -105,6 +106,8 @@ export default function LogoRatingPage() {
     let cancelled = false;
     async function init() {
       const existing = localStorage.getItem(SESSION_KEY);
+      const dismissed = localStorage.getItem("archifex-rating-intro-dismissed");
+      if (!existing && !dismissed) setShowIntro(true);
       try {
         if (existing) {
           const data = await api<SessionData>(`/api/public/logos/sessions/${existing}`).catch(() => null);
@@ -360,6 +363,32 @@ export default function LogoRatingPage() {
       {error && (
         <div className="bg-red-500/10 border-b border-red-500/30 px-4 py-2 text-center text-sm text-red-500">
           {error} <button onClick={() => setError(null)} className="ml-2 underline">dismiss</button>
+        </div>
+      )}
+
+      {showIntro && (
+        <div className="border-b border-accent/30 bg-accent/10 px-4 py-4 sm:px-6">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <h2 className="mb-1 text-base font-bold text-text-primary">
+                Help us pick a logo for Archifex
+              </h2>
+              <p className="text-sm text-text-secondary">
+                30 variants across six themes (blueprint, isometric, blocks, house, latin,
+                process). Rate each from 0-10, compare head-to-head, see aggregate results.
+                Put your name in the top-right so we can tell ratings apart.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.setItem("archifex-rating-intro-dismissed", "1");
+                setShowIntro(false);
+              }}
+              className="rounded border border-border bg-bg-primary px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary"
+            >
+              Got it
+            </button>
+          </div>
         </div>
       )}
 
