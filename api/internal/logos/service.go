@@ -258,3 +258,82 @@ func (s *Service) Stats(ctx context.Context) (*AggregateStats, error) {
 		TotalComparisons: totalComparisons,
 	}, nil
 }
+
+// ListSessions returns per-session summaries (label, rating count, top 5 picks, favorites).
+// Only sessions with at least one rating are included.
+func (s *Service) ListSessions(ctx context.Context) ([]SessionSummary, error) {
+	// Pull all sessions that have ratings or comparisons
+	rows, err := s.db.Query(ctx, `
+		SELECT s.id, s.label, s.created_at, s.last_seen_at,
+		       COUNT(r.logo_id)::int AS rated_count,
+		       AVG(r.score)::float AS avg_score,
+		       (SELECT COUNT(*) FROM logo_comparisons c WHERE c.session_id = s.id)::int AS comparisons
+		FROM logo_rating_sessions s
+		LEFT JOIN logo_ratings r ON r.session_id = s.id
+		GROUP BY s.id
+		HAVING COUNT(r.logo_id) > 0
+		   OR (SELECT COUNT(*) FROM logo_comparisons c WHERE c.session_id = s.id) > 0
+		ORDER BY s.last_seen_at DESC
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("list sessions: %w", err)
+	}
+	defer rows.Close()
+
+	summaries := []SessionSummary{}
+	for rows.Next() {
+		var sum SessionSummary
+		if err := rows.Scan(&sum.ID, &sum.Label, &sum.CreatedAt, &sum.LastSeenAt,
+			&sum.RatedCount, &sum.AvgScore, &sum.Comparisons); err != nil {
+			return nil, fmt.Errorf("scan session summary: %w", err)
+		}
+		sum.FavoriteIDs = []int{}
+		sum.TopPicks = []TopPick{}
+		summaries = append(summaries, sum)
+	}
+
+	// For each session, fetch top 5 picks + favorites (small N, so separate queries are fine)
+	for i := range summaries {
+		// Top 5 by score, ties broken by updated_at desc
+		pickRows, err := s.db.Query(ctx, `
+			SELECT logo_id, score, is_favorite
+			FROM logo_ratings
+			WHERE session_id = $1
+			ORDER BY score DESC, updated_at DESC
+			LIMIT 5
+		`, summaries[i].ID)
+		if err != nil {
+			return nil, fmt.Errorf("session top picks: %w", err)
+		}
+		for pickRows.Next() {
+			var p TopPick
+			if err := pickRows.Scan(&p.LogoID, &p.Score, &p.IsFavorite); err != nil {
+				pickRows.Close()
+				return nil, fmt.Errorf("scan top pick: %w", err)
+			}
+			summaries[i].TopPicks = append(summaries[i].TopPicks, p)
+		}
+		pickRows.Close()
+
+		// Favorites (separate so they're always surfaced even if not in top 5)
+		favRows, err := s.db.Query(ctx, `
+			SELECT logo_id FROM logo_ratings
+			WHERE session_id = $1 AND is_favorite = TRUE
+			ORDER BY updated_at DESC
+		`, summaries[i].ID)
+		if err != nil {
+			return nil, fmt.Errorf("session favorites: %w", err)
+		}
+		for favRows.Next() {
+			var id int
+			if err := favRows.Scan(&id); err != nil {
+				favRows.Close()
+				return nil, fmt.Errorf("scan favorite id: %w", err)
+			}
+			summaries[i].FavoriteIDs = append(summaries[i].FavoriteIDs, id)
+		}
+		favRows.Close()
+	}
+
+	return summaries, nil
+}

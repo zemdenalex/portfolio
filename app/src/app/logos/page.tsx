@@ -82,6 +82,19 @@ type AggregateStats = {
   total_comparisons: number;
 };
 
+type TopPick = { logo_id: number; score: number; is_favorite: boolean };
+type SessionSummary = {
+  id: string;
+  label: string | null;
+  created_at: string;
+  last_seen_at: string;
+  rated_count: number;
+  avg_score: number | null;
+  favorite_ids: number[];
+  top_picks: TopPick[];
+  comparisons: number;
+};
+
 const SESSION_KEY = "archifex-rating-session-id";
 
 /* ─── Page ─── */
@@ -92,6 +105,7 @@ export default function LogoRatingPage() {
   const [ratings, setRatings] = useState<Record<number, Rating>>({});
   const [comparisons, setComparisons] = useState(0);
   const [stats, setStats] = useState<AggregateStats | null>(null);
+  const [sessionSummaries, setSessionSummaries] = useState<SessionSummary[] | null>(null);
   const [tab, setTab] = useState<"rate" | "compare" | "results">("rate");
   const [currentIdx, setCurrentIdx] = useState(0);
   const [viewMode, setViewMode] = useState<"single" | "grid">("single");
@@ -234,8 +248,12 @@ export default function LogoRatingPage() {
 
   const loadStats = useCallback(async () => {
     try {
-      const s = await api<AggregateStats>(`/api/public/logos/stats`);
+      const [s, sessions] = await Promise.all([
+        api<AggregateStats>(`/api/public/logos/stats`),
+        api<SessionSummary[]>(`/api/public/logos/sessions`),
+      ]);
       setStats(s);
+      setSessionSummaries(sessions);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load stats");
     }
@@ -422,6 +440,8 @@ export default function LogoRatingPage() {
       {tab === "results" && (
         <ResultsSection
           stats={stats}
+          sessionSummaries={sessionSummaries}
+          mySessionId={sessionId}
           myRatings={ratings}
           myFavorites={Object.values(ratings).filter((r) => r.is_favorite).map((r) => r.logo_id)}
           myComparisons={comparisons}
@@ -719,6 +739,8 @@ function CompareSection({
 
 function ResultsSection({
   stats,
+  sessionSummaries,
+  mySessionId,
   myRatings,
   myFavorites,
   myComparisons,
@@ -727,6 +749,8 @@ function ResultsSection({
   onReload,
 }: {
   stats: AggregateStats | null;
+  sessionSummaries: SessionSummary[] | null;
+  mySessionId: string | null;
   myRatings: Record<number, Rating>;
   myFavorites: number[];
   myComparisons: number;
@@ -734,7 +758,7 @@ function ResultsSection({
   myFavCount: number;
   onReload: () => void;
 }) {
-  const [view, setView] = useState<"global" | "mine">("global");
+  const [view, setView] = useState<"global" | "sessions" | "mine">("global");
 
   const topByAvg = useMemo(() => {
     if (!stats) return [];
@@ -782,7 +806,15 @@ function ResultsSection({
               view === "global" ? "bg-bg-primary shadow-sm" : "text-text-muted"
             }`}
           >
-            Everyone's results
+            Aggregated
+          </button>
+          <button
+            onClick={() => setView("sessions")}
+            className={`rounded px-3 py-1.5 font-semibold ${
+              view === "sessions" ? "bg-bg-primary shadow-sm" : "text-text-muted"
+            }`}
+          >
+            By voter
           </button>
           <button
             onClick={() => setView("mine")}
@@ -801,7 +833,9 @@ function ResultsSection({
         </button>
       </div>
 
-      {view === "global" ? (
+      {view === "sessions" ? (
+        <SessionsView sessions={sessionSummaries} mySessionId={mySessionId} />
+      ) : view === "global" ? (
         <>
           {/* Global stats grid */}
           <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -884,6 +918,134 @@ function ResultsSection({
         </>
       )}
     </section>
+  );
+}
+
+function SessionsView({
+  sessions,
+  mySessionId,
+}: {
+  sessions: SessionSummary[] | null;
+  mySessionId: string | null;
+}) {
+  if (sessions === null) {
+    return <p className="py-8 text-center text-sm text-text-muted">Loading sessions…</p>;
+  }
+  if (sessions.length === 0) {
+    return (
+      <div className="rounded-lg border border-border bg-bg-secondary p-8 text-center text-sm text-text-muted">
+        No voters yet. Share this page to collect ratings.
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-text-muted">
+        {sessions.length} voter{sessions.length === 1 ? "" : "s"}. Top picks + favorites shown per session.
+      </p>
+      {sessions.map((sess) => (
+        <div
+          key={sess.id}
+          className={`overflow-hidden rounded-lg border bg-bg-secondary ${
+            sess.id === mySessionId ? "border-accent/60" : "border-border"
+          }`}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
+            <div className="min-w-0">
+              <h3 className="flex items-center gap-2 text-base font-bold">
+                {sess.label || (
+                  <span className="font-mono text-sm text-text-muted">
+                    anon · {sess.id.slice(0, 8)}
+                  </span>
+                )}
+                {sess.id === mySessionId && (
+                  <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-accent">
+                    YOU
+                  </span>
+                )}
+              </h3>
+              <div className="mt-0.5 font-mono text-[11px] text-text-muted">
+                {sess.rated_count} rated
+                {sess.avg_score !== null &&
+                  ` · avg ${sess.avg_score.toFixed(2)}/10`}
+                {sess.comparisons > 0 && ` · ${sess.comparisons} compared`}
+                {` · ${new Date(sess.last_seen_at).toLocaleString()}`}
+              </div>
+            </div>
+          </div>
+
+          {sess.top_picks.length > 0 && (
+            <div className="border-b border-border px-5 py-3">
+              <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                Top picks
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sess.top_picks.map((pick) => {
+                  const logo = LOGOS.find((l) => l.id === pick.logo_id);
+                  if (!logo) return null;
+                  return (
+                    <div
+                      key={pick.logo_id}
+                      className="flex items-center gap-2 rounded-md border border-border bg-bg-primary px-2 py-1.5"
+                    >
+                      <div className="flex h-9 w-16 items-center justify-center rounded bg-white">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/logos/${logo.slug}.svg`}
+                          alt=""
+                          className="max-h-7 max-w-full"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-semibold leading-tight">
+                          {logo.name}
+                        </span>
+                        <span className="font-mono text-[10px] text-text-muted">
+                          #{String(logo.id).padStart(2, "0")} · {pick.score}/10
+                          {pick.is_favorite && " ★"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {sess.favorite_ids.length > 0 && (
+            <div className="px-5 py-3">
+              <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                ★ Favorites
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sess.favorite_ids.map((id) => {
+                  const logo = LOGOS.find((l) => l.id === id);
+                  if (!logo) return null;
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1.5"
+                    >
+                      <div className="flex h-8 w-14 items-center justify-center rounded bg-white">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/logos/${logo.slug}.svg`}
+                          alt=""
+                          className="max-h-6 max-w-full"
+                        />
+                      </div>
+                      <span className="font-mono text-[10px] text-amber-700 dark:text-amber-400">
+                        #{String(logo.id).padStart(2, "0")} {logo.name}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 

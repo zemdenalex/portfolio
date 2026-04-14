@@ -151,6 +151,7 @@ func main() {
 			r.Post("/logos/sessions/{id}/favorite", logosHandler.SetFavorite)
 			r.Post("/logos/sessions/{id}/compare", logosHandler.Compare)
 			r.Get("/logos/stats", logosHandler.Stats)
+			r.Get("/logos/sessions", logosHandler.ListSessions)
 		})
 
 		// Admin routes (auth required)

@@ -42,6 +42,26 @@ type AggregateStats struct {
 	TotalComparisons int        `json:"total_comparisons"`
 }
 
+// SessionSummary is a lightweight overview of one rating session,
+// with its top 5 picks (by score) for the by-session leaderboard.
+type SessionSummary struct {
+	ID           string    `json:"id"`
+	Label        *string   `json:"label"`
+	CreatedAt    time.Time `json:"created_at"`
+	LastSeenAt   time.Time `json:"last_seen_at"`
+	RatedCount   int       `json:"rated_count"`
+	AvgScore     *float64  `json:"avg_score"`
+	FavoriteIDs  []int     `json:"favorite_ids"`
+	TopPicks     []TopPick `json:"top_picks"`
+	Comparisons  int       `json:"comparisons"`
+}
+
+type TopPick struct {
+	LogoID     int  `json:"logo_id"`
+	Score      int  `json:"score"`
+	IsFavorite bool `json:"is_favorite"`
+}
+
 type SessionData struct {
 	Session     Session  `json:"session"`
 	Ratings     []Rating `json:"ratings"`

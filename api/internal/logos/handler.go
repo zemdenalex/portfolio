@@ -150,3 +150,12 @@ func (h *Handler) Stats(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, stats)
 }
+
+func (h *Handler) ListSessions(w http.ResponseWriter, r *http.Request) {
+	sessions, err := h.service.ListSessions(r.Context())
+	if err != nil {
+		response.InternalError(w, "failed to list sessions")
+		return
+	}
+	response.JSON(w, http.StatusOK, sessions)
+}
