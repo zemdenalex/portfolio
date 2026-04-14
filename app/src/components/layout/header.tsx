@@ -27,7 +27,7 @@ export function Header() {
           className="font-mono text-xl font-bold tracking-widest text-accent"
           aria-label="Home"
         >
-          DZ
+          A<span className="hidden sm:inline">rchifex</span>
         </Link>
 
         {/* Desktop nav */}
