@@ -32,7 +32,8 @@ Full spec: `E:\Projects\docs\superpowers\specs\2026-03-22-portfolio-platform-des
 - [x] Bilingual EN/RU (next-intl with /[locale]/ routing)
 - [x] SEO: meta tags, sitemap, robots.txt
 - [x] Go API backend (Chi + pgx + JWT auth)
-- [ ] Deploy
+- [x] Deploy to VPS (Docker Compose + host nginx + Let's Encrypt)
+- [x] Logo rating tool with backend persistence (30 SVG variants at `/logos`)
 
 ### NOT in Phase 1
 - Tech demos (Phase 2)
@@ -133,6 +134,14 @@ docker compose up -d db         # Start PostgreSQL (port 5433)
 /api/public/styles               GET     All styles
 /api/public/packages             GET     All packages
 /api/public/content              GET     Site content
+/api/public/logos/sessions       POST    Create anonymous rating session
+/api/public/logos/sessions/:id   GET     Session data (ratings, favorites, comp count)
+/api/public/logos/sessions/:id   PUT     Update session label
+/api/public/logos/sessions/:id/rate       POST  Upsert rating (0-10)
+/api/public/logos/sessions/:id/favorite   POST  Toggle favorite
+/api/public/logos/sessions/:id/compare    POST  Record head-to-head
+/api/public/logos/stats          GET     Aggregate stats across all voters
+/api/public/logos/sessions       GET     Per-session summaries + top picks
 /api/admin/*                     *       Protected CRUD (JWT required)
 ```
 
