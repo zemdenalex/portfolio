@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Custom AF ligature: A and F share the crossbar -->
+  <g transform="translate(10 6)">
+    <!-- The shared form — drawn as a single unified mark -->
+    <!-- A: left leg + right leg -->
+    <path d="M20 0 L2 56 L10 56 L14 44 L26 44 L26 56 L34 56 L34 28 L26 28 L26 18 L22 32 L17 32 L22 16 Z"
+          fill="currentColor" opacity="0"/>
+    <!-- Clean custom approach: stroke-built AF ligature -->
+    <g stroke="currentColor" stroke-width="8" stroke-linecap="butt" stroke-linejoin="miter" fill="none">
+      <!-- A left diagonal -->
+      <line x1="4" y1="54" x2="22" y2="4"/>
+      <!-- A right diagonal / F vertical shared -->
+      <line x1="22" y1="4" x2="38" y2="54"/>
+    </g>
+    <!-- F top bar extending from apex -->
+    <rect x="22" y="0" width="28" height="7" fill="currentColor"/>
+    <!-- Shared crossbar (A's bar + F's middle) -->
+    <rect x="10" y="26" width="38" height="6" fill="#0891b2"/>
+    <!-- F vertical extension (rises from the crossbar, meets top bar) -->
+    <rect x="44" y="4" width="6" height="26" fill="currentColor"/>
+    <!-- Small accent dot on A apex -->
+    <circle cx="22" cy="4" r="3.5" fill="#0891b2"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="76" y="42" font-family="system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.3" fill="currentColor">Archifex</text>
+  <text x="76" y="56" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">LIGATURE MARK</text>
+</svg>

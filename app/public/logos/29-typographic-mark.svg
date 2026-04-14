@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+  <!-- Custom A glyph with sharp serif flourishes, drawn as a proper letterform -->
+  <g transform="translate(12 6)">
+    <!-- Main A shape (serif letterform with strong axis) -->
+    <path d="M28 0
+             L34 0
+             L50 64
+             L58 64
+             L58 68
+             L38 68
+             L38 64
+             L44 64
+             L40 50
+             L20 50
+             L16 64
+             L22 64
+             L22 68
+             L2 68
+             L2 64
+             L10 64
+             L26 0 Z
+             M22 44 L38 44 L30 14 Z" fill="currentColor" fill-rule="evenodd"/>
+    <!-- Accent crossbar -->
+    <rect x="22" y="40" width="16" height="2" fill="#0891b2"/>
+    <!-- Apex serif tick -->
+    <rect x="28" y="0" width="6" height="3" fill="#0891b2"/>
+  </g>
+  <!-- Wordmark (same Didot-ish serif family for consistency) -->
+  <text x="80" y="44" font-family="'Didot', 'Bodoni 72', Georgia, serif" font-size="28" font-weight="700" letter-spacing="-0.5" fill="currentColor">Archifex</text>
+  <text x="80" y="60" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">CUSTOM · LETTERFORM</text>
+</svg>

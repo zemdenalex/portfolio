@@ -1,14 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80" fill="none">
-  <!-- Serious stacked wordmark: ARCHI over FEX with divider -->
-  <text x="110" y="32" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="700" letter-spacing="6" fill="currentColor">ARCHI</text>
-  <!-- Divider with tick marks -->
-  <g stroke="#0891b2" stroke-width="1.25">
-    <line x1="40" y1="42" x2="180" y2="42"/>
-    <line x1="40" y1="38" x2="40" y2="46"/>
-    <line x1="180" y1="38" x2="180" y2="46"/>
-    <circle cx="110" cy="42" r="2" fill="#0891b2" stroke="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" fill="none">
+  <!-- Seal + stacked editorial wordmark -->
+  <!-- Left: ornate seal with A triangle + laurel -->
+  <g transform="translate(18 18)">
+    <circle cx="32" cy="32" r="30" stroke="#0891b2" stroke-width="1.5" fill="none"/>
+    <circle cx="32" cy="32" r="26" stroke="#0891b2" stroke-width="0.5" fill="none" opacity="0.5"/>
+    <!-- Inner A triangle -->
+    <path d="M32 16 L46 44 L18 44 Z" fill="#0891b2"/>
+    <line x1="23" y1="36" x2="41" y2="36" stroke="var(--bg, #0c1929)" stroke-width="2"/>
+    <!-- Laurel ticks around edge -->
+    <g stroke="#0891b2" stroke-width="1">
+      <line x1="32" y1="4" x2="32" y2="8"/>
+      <line x1="32" y1="56" x2="32" y2="60"/>
+      <line x1="4" y1="32" x2="8" y2="32"/>
+      <line x1="56" y1="32" x2="60" y2="32"/>
+    </g>
+    <!-- Seal date bottom arc text would go here -->
+    <text x="32" y="58" text-anchor="middle" font-family="ui-monospace, monospace" font-size="5" font-weight="700" fill="#0891b2">· MMXXVI ·</text>
   </g>
-  <text x="110" y="66" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="700" letter-spacing="10" fill="currentColor">FEX</text>
-  <!-- Tagline -->
-  <text x="110" y="78" text-anchor="middle" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">EST. MMXXVI</text>
+  <!-- Masthead wordmark -->
+  <!-- Top rule with tick -->
+  <g stroke="#0891b2" stroke-width="1">
+    <line x1="104" y1="20" x2="300" y2="20"/>
+    <line x1="104" y1="16" x2="104" y2="24"/>
+    <line x1="300" y1="16" x2="300" y2="24"/>
+  </g>
+  <!-- ARCHI -->
+  <text x="202" y="46" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" letter-spacing="6" fill="currentColor">ARCHI</text>
+  <!-- Middle separator with center dot -->
+  <g stroke="#0891b2" stroke-width="0.75">
+    <line x1="114" y1="52" x2="290" y2="52"/>
+    <circle cx="202" cy="52" r="1.5" fill="#0891b2" stroke="none"/>
+  </g>
+  <!-- FEX -->
+  <text x="202" y="72" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="700" letter-spacing="10" fill="currentColor">FEX</text>
+  <!-- Bottom rule -->
+  <g stroke="#0891b2" stroke-width="1">
+    <line x1="104" y1="80" x2="300" y2="80"/>
+    <line x1="104" y1="76" x2="104" y2="84"/>
+    <line x1="300" y1="76" x2="300" y2="84"/>
+  </g>
+  <!-- Latin motto -->
+  <text x="202" y="94" text-anchor="middle" font-family="Georgia, serif" font-size="7" letter-spacing="5" fill="#0891b2" opacity="0.8" font-style="italic">QVI · AEDIFICAT · WEB</text>
 </svg>

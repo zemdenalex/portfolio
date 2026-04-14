@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 48" fill="none">
-  <!-- JSX-style self-closing tag: <archifex /> -->
-  <text x="6" y="34" font-family="ui-monospace, Menlo, monospace" font-size="26" font-weight="700">
-    <tspan fill="#0891b2">&lt;</tspan><tspan fill="currentColor">archifex</tspan><tspan fill="#0891b2"> /&gt;</tspan>
-  </text>
-  <!-- Blinking cursor indicator -->
-  <rect x="244" y="14" width="10" height="22" fill="#0891b2" opacity="0.85"/>
-</svg>

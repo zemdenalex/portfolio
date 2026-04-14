@@ -3,13 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Archifex — Logo Explorations</title>
+<title>Archifex — Logo Explorations (30)</title>
 <style>
-  :root {
-    --cyan: #0891b2;
-    --navy: #0c1929;
-    --ice: #e8f0f5;
-  }
+  :root { --cyan: #0891b2; --navy: #0c1929; --ice: #e8f0f5; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -18,196 +14,238 @@
     color: #111;
   }
   header {
-    padding: 40px 32px 24px;
+    padding: 36px 32px 20px;
     border-bottom: 1px solid #e2e8f0;
     background: #fff;
   }
   header h1 {
     margin: 0 0 6px;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.5px;
   }
   header p {
-    margin: 0;
+    margin: 0 0 12px;
     color: #64748b;
     font-size: 14px;
   }
+  .cta {
+    display: inline-block;
+    padding: 10px 16px;
+    background: var(--cyan);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .cta:hover { background: #0e7490; }
   .grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 32px;
-    max-width: 1200px;
+    gap: 20px;
+    padding: 28px;
+    max-width: 1280px;
     margin: 0 auto;
   }
-  @media (min-width: 768px) {
-    .grid { grid-template-columns: 1fr 1fr; }
-  }
+  @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
   .card {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     overflow: hidden;
     background: #fff;
-    display: flex;
-    flex-direction: column;
   }
   .card-header {
-    padding: 14px 18px;
+    padding: 12px 18px;
     border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #fafbfc;
   }
-  .card-header h2 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-  .card-header .num {
+  .card-header h2 { margin: 0; font-size: 14px; font-weight: 700; }
+  .num {
     font-family: ui-monospace, monospace;
     font-size: 11px;
     color: var(--cyan);
     font-weight: 700;
+    background: #ecfeff;
+    padding: 3px 7px;
+    border-radius: 4px;
   }
-  .preview {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .preview > div {
-    padding: 32px 24px;
-    min-height: 140px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .light { background: #ffffff; color: #111; }
+  .preview { display: grid; grid-template-columns: 1fr 1fr; }
+  .preview > div { padding: 26px 18px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+  .light { background: #fff; color: #111; }
   .dark { background: var(--navy); color: var(--ice); }
-  .preview img {
-    max-width: 100%;
-    max-height: 80px;
-    height: auto;
-  }
-  .meta {
-    padding: 12px 18px;
-    font-size: 12px;
-    color: #64748b;
-    background: #fafbfc;
-    border-top: 1px solid #e2e8f0;
-    font-family: ui-monospace, monospace;
-  }
-  footer {
-    padding: 32px;
-    text-align: center;
-    color: #64748b;
-    font-size: 13px;
-    border-top: 1px solid #e2e8f0;
-    background: #fff;
-  }
+  .preview img { max-width: 100%; max-height: 78px; height: auto; }
+  .meta { padding: 12px 18px; font-size: 13px; color: #334155; background: #fafbfc; border-top: 1px solid #e2e8f0; line-height: 1.55; }
+  .meta .idea { color: var(--cyan); font-weight: 600; }
+  footer { padding: 24px; text-align: center; color: #64748b; font-size: 13px; border-top: 1px solid #e2e8f0; background: #fff; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Archifex — Logo Explorations</h1>
-  <p>10 directions. Each shown on light + dark backgrounds. Pick one or mix elements from several.</p>
+  <h1>Archifex — Logo Explorations, Round 3 <span style="font-weight:400; color:#64748b; font-size:16px">(30 variants)</span></h1>
+  <p>Refined based on your feedback. Each with explanation of the idea.</p>
+  <a class="cta" href="rate.html">→ Open Rating Tool</a>
 </header>
 
 <div class="grid">
-  <div class="card">
-    <div class="card-header"><h2>Blueprint Wireframe</h2><span class="num">01</span></div>
-    <div class="preview">
-      <div class="light"><img src="01-blueprint-wireframe.svg" alt=""></div>
-      <div class="dark"><img src="01-blueprint-wireframe.svg" alt=""></div>
-    </div>
-    <div class="meta">Dashed "A" + measurement ticks. On-brand, literal architect theme.</div>
+
+  <div class="card"><div class="card-header"><h2>Blueprint Wireframe</h2><span class="num">01</span></div>
+    <div class="preview"><div class="light"><img src="01-blueprint-wireframe.svg" alt=""></div><div class="dark"><img src="01-blueprint-wireframe.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Technical drawing. A is drafted with dashed construction lines, apex crosshair, height dimension (H), and revision/sheet numbers — like a real architectural sheet you'd find in a set of plans.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Code Tag</h2><span class="num">02</span></div>
-    <div class="preview">
-      <div class="light"><img src="02-code-tag.svg" alt=""></div>
-      <div class="dark"><img src="02-code-tag.svg" alt=""></div>
-    </div>
-    <div class="meta">&lt;archifex /&gt; — devs instantly get it. Signals "we write code."</div>
+  <div class="card"><div class="card-header"><h2>Roman Inscription</h2><span class="num">02</span></div>
+    <div class="preview"><div class="light"><img src="02-roman-inscription.svg" alt=""></div><div class="dark"><img src="02-roman-inscription.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Trajan-style capitals referencing Roman monumental inscriptions (Arch of Titus, Pantheon). Latin motto <i>"Qvi aedificat web"</i> = "He who builds the web." Classical authority.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Geometric Triangle</h2><span class="num">03</span></div>
-    <div class="preview">
-      <div class="light"><img src="03-geometric-triangle.svg" alt=""></div>
-      <div class="dark"><img src="03-geometric-triangle.svg" alt=""></div>
-    </div>
-    <div class="meta">Solid triangular "A" mark. Bold, modern, works as standalone icon.</div>
+  <div class="card"><div class="card-header"><h2>Pitched Roof Glyph</h2><span class="num">03</span></div>
+    <div class="preview"><div class="light"><img src="03-pitched-roof-glyph.svg" alt=""></div><div class="dark"><img src="03-pitched-roof-glyph.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Just a roof silhouette sitting on a foundation line — simultaneously A and house. Minimal, suggestive, not literal. No windows, no walls. The viewer completes the house.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Arch</h2><span class="num">04</span></div>
-    <div class="preview">
-      <div class="light"><img src="04-arch.svg" alt=""></div>
-      <div class="dark"><img src="04-arch.svg" alt=""></div>
-    </div>
-    <div class="meta">Literal architectural arch + serif wordmark. Classical, premium.</div>
+  <div class="card"><div class="card-header"><h2>Skyscraper</h2><span class="num">04</span></div>
+    <div class="preview"><div class="light"><img src="04-skyscraper.svg" alt=""></div><div class="dark"><img src="04-skyscraper.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A tapering tower with horizontal window bands + antenna spire. Tapers outward like an A. "We build skyscrapers, not huts." Ambitious, urban, permanent.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Compass</h2><span class="num">05</span></div>
-    <div class="preview">
-      <div class="light"><img src="05-compass.svg" alt=""></div>
-      <div class="dark"><img src="05-compass.svg" alt=""></div>
-    </div>
-    <div class="meta">Drafting compass forming an "A." Pivot = emphasis. Tool of the trade.</div>
+  <div class="card"><div class="card-header"><h2>Compass</h2><span class="num">05</span></div>
+    <div class="preview"><div class="light"><img src="05-compass.svg" alt=""></div><div class="dark"><img src="05-compass.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Drafting compass — pivot at apex, arc being drawn at base, crossbar = the drawn line. Tool of the craft. Pivot = emphasis (the accent point).</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Isometric</h2><span class="num">06</span></div>
-    <div class="preview">
-      <div class="light"><img src="06-isometric.svg" alt=""></div>
-      <div class="dark"><img src="06-isometric.svg" alt=""></div>
-    </div>
-    <div class="meta">3D isometric block. "We build." Tech + construction vibe.</div>
+  <div class="card"><div class="card-header"><h2>Isometric Block</h2><span class="num">06</span></div>
+    <div class="preview"><div class="light"><img src="06-isometric.svg" alt=""></div><div class="dark"><img src="06-isometric.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Single 3D prism viewed from 3/4 angle with crossbar groove cut into the top face. Clean, architectural, solid. Reads as "we build dimensional things."</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Pixel Grid</h2><span class="num">07</span></div>
-    <div class="preview">
-      <div class="light"><img src="07-pixel-grid.svg" alt=""></div>
-      <div class="dark"><img src="07-pixel-grid.svg" alt=""></div>
-    </div>
-    <div class="meta">"A" on a pixel grid. Digital-native, playful, retro-tech.</div>
+  <div class="card"><div class="card-header"><h2>Modular Blocks v3</h2><span class="num">07</span></div>
+    <div class="preview"><div class="light"><img src="07-modular-blocks.svg" alt=""></div><div class="dark"><img src="07-modular-blocks.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Mixed-size blocks with subtle depth shading + one highlighted "keystone" block at the crossbar in bright cyan. Modular composition — we build from pieces.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Constellation</h2><span class="num">08</span></div>
-    <div class="preview">
-      <div class="light"><img src="08-constellation.svg" alt=""></div>
-      <div class="dark"><img src="08-constellation.svg" alt=""></div>
-    </div>
-    <div class="meta">Connected nodes. Network / circuit / systems-thinking aesthetic.</div>
+  <div class="card"><div class="card-header"><h2>Truss / Constellation</h2><span class="num">08</span></div>
+    <div class="preview"><div class="light"><img src="08-constellation.svg" alt=""></div><div class="dark"><img src="08-constellation.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Engineering truss with cross-bracing and riveted joints. A as load-bearing structure. Signals "we engineer systems, not just decoration."</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Stacked Wordmark</h2><span class="num">09</span></div>
-    <div class="preview">
-      <div class="light"><img src="09-stacked-wordmark.svg" alt=""></div>
-      <div class="dark"><img src="09-stacked-wordmark.svg" alt=""></div>
-    </div>
-    <div class="meta">ARCHI / FEX with divider. No mark. Serious editorial studio feel.</div>
+  <div class="card"><div class="card-header"><h2>Masthead Seal</h2><span class="num">09</span></div>
+    <div class="preview"><div class="light"><img src="09-stacked-wordmark.svg" alt=""></div><div class="dark"><img src="09-stacked-wordmark.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Editorial masthead: circular seal with A + laurel ticks + MMXXVI date, stacked ARCHI/FEX with top & bottom rules and Latin motto. Full brand system.</div>
   </div>
 
-  <div class="card">
-    <div class="card-header"><h2>Dimension Line</h2><span class="num">10</span></div>
-    <div class="preview">
-      <div class="light"><img src="10-dimension-line.svg" alt=""></div>
-      <div class="dark"><img src="10-dimension-line.svg" alt=""></div>
-    </div>
-    <div class="meta">Lowercase mono + CAD dimension line. Subtle but unmistakably architect.</div>
+  <div class="card"><div class="card-header"><h2>Architectural Drawing</h2><span class="num">10</span></div>
+    <div class="preview"><div class="light"><img src="10-dimension-line.svg" alt=""></div><div class="dark"><img src="10-dimension-line.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Full CAD drawing treatment — [A] bracket icon, horizontal dimension line under the wordmark, vertical dimension on the side. Annotated like a technical drawing.</div>
   </div>
+
+  <div class="card"><div class="card-header"><h2>Isometric Cubes</h2><span class="num">11</span></div>
+    <div class="preview"><div class="light"><img src="11-isometric-cubes.svg" alt=""></div><div class="dark"><img src="11-isometric-cubes.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A built from 10 isometric unit cubes — the platonic ideal of "built from blocks." Modular + dimensional + honest about construction.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Exploded Construction v2</h2><span class="num">12</span></div>
+    <div class="preview"><div class="light"><img src="12-exploded-construction.svg" alt=""></div><div class="dark"><img src="12-exploded-construction.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Three parts — apex / crossbar / legs — separated as if mid-assembly. Shows WE understand construction. Cleaner alignment than v1, faint axis guide replaces busy dashes.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Wireframe Isometric</h2><span class="num">13</span></div>
+    <div class="preview"><div class="light"><img src="13-wireframe-isometric.svg" alt=""></div><div class="dark"><img src="13-wireframe-isometric.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> See-through 3D — every edge visible, no fills. Engineering model meets blueprint. Transparency = "we show our work."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Keystone Arch v2</h2><span class="num">14</span></div>
+    <div class="preview"><div class="light"><img src="14-keystone-arch.svg" alt=""></div><div class="dark"><img src="14-keystone-arch.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Simplified arch — just pillars + curve + keystone, no door or windows. Keystone A is integrated INTO the arch apex (not floating). "Keystone of your stack."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Process (Single A)</h2><span class="num">15</span></div>
+    <div class="preview"><div class="light"><img src="15-process-triptych.svg" alt=""></div><div class="dark"><img src="15-process-triptych.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> ONE A, sliced vertically into thirds: left = sketched, middle = blueprint dashed, right = solid built. Shows the full lifecycle (idea → blueprint → built) in a single mark.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Scaffold v2</h2><span class="num">16</span></div>
+    <div class="preview"><div class="light"><img src="16-scaffold.svg" alt=""></div><div class="dark"><img src="16-scaffold.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Solid A wrapped in real scaffolding — thick pipes, diagonal braces, bolted joints, red safety flag. Construction is underway. Much more "jobsite" than v1.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Roof Monogram v2</h2><span class="num">17</span></div>
+    <div class="preview"><div class="light"><img src="17-roof-monogram.svg" alt=""></div><div class="dark"><img src="17-roof-monogram.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Just the roof + foundation. A-shape peak with crossbar as a visible rafter. No doors, no windows, no walls. The viewer fills in "house."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Carved Stone v2</h2><span class="num">18</span></div>
+    <div class="preview"><div class="light"><img src="18-carved-stone.svg" alt=""></div><div class="dark"><img src="18-carved-stone.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea &amp; meaning:</span> "Archifex" is neo-Latin. <b>ARCHI-</b> (Greek: chief/master) + <b>-FEX</b> (Latin from <i>facere</i>, to make) — parallel to <i>artifex</i> (artisan), <i>pontifex</i> (bridge-maker → pontiff), <i>opifex</i> (craftsman). Literal meaning: <b>chief maker / master builder</b>. Inscription style references how Romans carved these words into monumental stone.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Tessellation v2</h2><span class="num">19</span></div>
+    <div class="preview"><div class="light"><img src="19-tessellation.svg" alt=""></div><div class="dark"><img src="19-tessellation.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Triangular tiles tessellate into an A, then FADE outward (suggesting infinite scale). Highlighted bright keystone tile at the crossbar = "every system has a load-bearing element." "Modular by design."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>AF Ligature</h2><span class="num">20</span></div>
+    <div class="preview"><div class="light"><img src="20-af-ligature.svg" alt=""></div><div class="dark"><img src="20-af-ligature.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A and F fused into a single typographic mark — they share the crossbar. Archi+Fex concept rendered as an actual ligature. Elegant, literary, distinctive at small sizes.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Construction Crane</h2><span class="num">21</span></div>
+    <div class="preview"><div class="light"><img src="21-construction-crane.svg" alt=""></div><div class="dark"><img src="21-construction-crane.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Solid A with tower crane rising from the apex — boom, cables, hook. Reads as "actively building." A + construction site in one glyph.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Rebar Framework</h2><span class="num">22</span></div>
+    <div class="preview"><div class="light"><img src="22-rebar.svg" alt=""></div><div class="dark"><img src="22-rebar.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Reinforcement steel (rebar) before the concrete pour. Diagonals + horizontal ties + tie-wire dots at intersections. Shows "we build structures that hold."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Bauhaus</h2><span class="num">23</span></div>
+    <div class="preview"><div class="light"><img src="23-bauhaus.svg" alt=""></div><div class="dark"><img src="23-bauhaus.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Circle + triangle + rectangle + dot — the Bauhaus primary shapes composing an A. "Form follows function." Movement that defined modern architecture.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Monolith</h2><span class="num">24</span></div>
+    <div class="preview"><div class="light"><img src="24-monolith.svg" alt=""></div><div class="dark"><img src="24-monolith.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Thick, carved A-slab with depth shadow + etched crossbar groove + edge scale ticks. Feels like it was cut from a single block of stone. Permanent, weighty.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Paper Fold</h2><span class="num">25</span></div>
+    <div class="preview"><div class="light"><img src="25-paper-fold.svg" alt=""></div><div class="dark"><img src="25-paper-fold.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A as folded paper — mountain fold down the center, valley fold at the crossbar. Softer than the solid blocks. "Folded from plan" — architectural origami.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Circuit</h2><span class="num">26</span></div>
+    <div class="preview"><div class="light"><img src="26-circuit.svg" alt=""></div><div class="dark"><img src="26-circuit.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A drawn as PCB traces with 90° bends, solder pads at nodes, vias at transitions. Tech version of the blueprint idea. "Trace · solder · build."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Art Deco</h2><span class="num">27</span></div>
+    <div class="preview"><div class="light"><img src="27-art-deco.svg" alt=""></div><div class="dark"><img src="27-art-deco.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Stepped Chrysler-building silhouette — layered triangles narrowing to a spire, with horizontal deco lines. 1920s optimism + vertical ambition.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Ribbon</h2><span class="num">28</span></div>
+    <div class="preview"><div class="light"><img src="28-ribbon.svg" alt=""></div><div class="dark"><img src="28-ribbon.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> A formed by a single continuous ribbon folding back on itself. V-notched ends, crease at apex, crossbar where ribbon crosses. "Woven together."</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Typographic Mark</h2><span class="num">29</span></div>
+    <div class="preview"><div class="light"><img src="29-typographic-mark.svg" alt=""></div><div class="dark"><img src="29-typographic-mark.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> Custom serif A letterform as a pure typographic mark — strong axis, serif terminals, accent crossbar. Paired with a Didot-style wordmark. Elegant, editorial.</div>
+  </div>
+
+  <div class="card"><div class="card-header"><h2>Letterpress</h2><span class="num">30</span></div>
+    <div class="preview"><div class="light"><img src="30-letterpress.svg" alt=""></div><div class="dark"><img src="30-letterpress.svg" alt=""></div></div>
+    <div class="meta"><span class="idea">Idea:</span> ARCHIFEX pressed into paper — emboss gradient for the impression, corner ornaments, classical divider. A nod to the physical craft of print before digital.</div>
+  </div>
+
 </div>
 
 <footer>
-  View at <code>/logos/</code> — pick by number and I'll wire it into the header + favicon.
+  <a href="rate.html" style="color: var(--cyan); font-weight: 600;">→ Open Rating Tool to score all 30</a>
 </footer>
 </body>
 </html>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 112" fill="none">
+  <!-- Letterpress emboss: ARCHIFEX pressed into paper -->
+  <defs>
+    <!-- Paper color vs. impression gradient -->
+    <linearGradient id="emboss" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="currentColor" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="currentColor" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="currentColor" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+  <!-- Paper frame with subtle texture -->
+  <rect x="8" y="8" width="304" height="96" rx="2" fill="currentColor" opacity="0.03"/>
+  <rect x="8" y="8" width="304" height="96" rx="2" fill="none" stroke="#0891b2" stroke-width="0.5" opacity="0.4"/>
+  <!-- Corner ornaments -->
+  <g fill="#0891b2" opacity="0.7">
+    <path d="M12 12 L20 12 L20 14 L14 14 L14 20 L12 20 Z"/>
+    <path d="M308 12 L300 12 L300 14 L306 14 L306 20 L308 20 Z"/>
+    <path d="M12 100 L20 100 L20 98 L14 98 L14 92 L12 92 Z"/>
+    <path d="M308 100 L300 100 L300 98 L306 98 L306 92 L308 92 Z"/>
+  </g>
+  <!-- Pressed wordmark (with shadow emboss) -->
+  <g>
+    <!-- Soft highlight (top) -->
+    <text x="160" y="60" text-anchor="middle" font-family="'Cinzel', 'Trajan Pro', Georgia, serif" font-size="34" font-weight="700" letter-spacing="10" fill="#fff" opacity="0.3">ARCHIFEX</text>
+    <!-- Main impression -->
+    <text x="161" y="62" text-anchor="middle" font-family="'Cinzel', 'Trajan Pro', Georgia, serif" font-size="34" font-weight="700" letter-spacing="10" fill="url(#emboss)">ARCHIFEX</text>
+  </g>
+  <!-- Classical ornament divider -->
+  <g stroke="#0891b2" stroke-width="0.75" opacity="0.5" fill="none">
+    <line x1="60" y1="76" x2="130" y2="76"/>
+    <line x1="190" y1="76" x2="260" y2="76"/>
+  </g>
+  <circle cx="160" cy="76" r="2" fill="#0891b2" opacity="0.7"/>
+  <!-- Tagline -->
+  <text x="160" y="90" text-anchor="middle" font-family="'Cinzel', Georgia, serif" font-size="8" letter-spacing="4" fill="currentColor" opacity="0.7" font-style="italic">PRESSED · IN · DIGITAL</text>
+</svg>

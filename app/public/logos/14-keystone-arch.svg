@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Simplified arch — keystone integrated AT the apex, no door/windows -->
+  <g transform="translate(6 4)">
+    <!-- Left pillar -->
+    <rect x="0" y="28" width="8" height="36" fill="currentColor"/>
+    <!-- Right pillar -->
+    <rect x="48" y="28" width="8" height="36" fill="currentColor"/>
+    <!-- Arch body (smooth curve) -->
+    <path d="M8 28 A20 20 0 0 1 48 28 L44 28 A16 16 0 0 0 12 28 Z" fill="currentColor"/>
+    <!-- Keystone wedge AT the apex, integrated into the arch curve -->
+    <path d="M20 14 L36 14 L42 28 L14 28 Z" fill="#0891b2"/>
+    <!-- A shape on keystone (simple triangle) -->
+    <path d="M28 18 L36 26 L20 26 Z" fill="var(--bg, #0c1929)"/>
+    <line x1="23" y1="23" x2="33" y2="23" stroke="#0891b2" stroke-width="1.5"/>
+    <!-- Floor -->
+    <line x1="-4" y1="64" x2="60" y2="64" stroke="currentColor" stroke-width="1"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="42" font-family="Georgia, serif" font-size="24" font-weight="700" letter-spacing="3" fill="currentColor">ARCHIFEX</text>
+  <text x="80" y="56" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">KEYSTONE · OF · YOUR · STACK</text>
+</svg>

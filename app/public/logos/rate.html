@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Archifex — Logo Rating Tool</title>
+<style>
+  :root {
+    --cyan: #0891b2;
+    --cyan-hover: #0e7490;
+    --navy: #0c1929;
+    --ice: #e8f0f5;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --bg: #f5f7fa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Top bar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .topbar h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .topbar h1 span { color: var(--cyan); }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .tab {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: #fff;
+    color: var(--text);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+  .toolbar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .progress-chip {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    background: #f1f5f9;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+  .btn {
+    padding: 8px 14px;
+    background: var(--cyan);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--cyan-hover); }
+  .btn.ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn.ghost:hover { color: var(--text); background: #f8fafc; }
+  .btn.danger { background: #fee2e2; color: #b91c1c; }
+  .btn.danger:hover { background: #fecaca; }
+
+  /* Panels */
+  .panel { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* RATE MODE */
+  .rate-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .view-toggle { display: flex; gap: 4px; background: #f1f5f9; padding: 3px; border-radius: 6px; }
+  .view-toggle button {
+    padding: 5px 10px; border: none; background: transparent; cursor: pointer;
+    border-radius: 4px; font-size: 12px; color: var(--muted); font-weight: 600;
+  }
+  .view-toggle button.active { background: #fff; color: var(--text); }
+
+  /* Single-view rate card */
+  .single-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .nav-bar {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-bar .counter { font-family: ui-monospace, monospace; font-size: 13px; color: var(--muted); }
+  .nav-bar .btns { display: flex; gap: 6px; }
+  .nav-btn {
+    padding: 6px 12px;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .nav-btn:hover { background: #e2e8f0; }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .single-preview {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 260px;
+  }
+  .single-preview > div {
+    padding: 40px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .single-preview img { max-width: 100%; max-height: 160px; height: auto; }
+  .single-preview .light { background: #fff; color: #111; }
+  .single-preview .dark { background: var(--navy); color: var(--ice); }
+  .single-meta {
+    padding: 18px 24px;
+    border-top: 1px solid var(--border);
+    background: #fafbfc;
+  }
+  .single-meta h3 { margin: 0 0 6px; font-size: 20px; font-weight: 800; }
+  .single-meta .num-big { color: var(--cyan); font-family: ui-monospace, monospace; font-weight: 700; margin-right: 8px; }
+  .single-meta p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .rating-row {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .rating-row .label { font-size: 13px; color: var(--muted); font-weight: 600; margin-right: 4px; }
+  .rating-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+  .rate-btn {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.1s;
+    font-family: ui-monospace, monospace;
+  }
+  .rate-btn:hover { background: #f1f5f9; border-color: #94a3b8; }
+  .rate-btn.selected { background: var(--cyan); color: #fff; border-color: var(--cyan); transform: scale(1.05); }
+  .rate-btn.selected-0 { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+  .rate-btn.selected-low { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .rate-btn.selected-high { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+  .fav-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .fav-btn.active { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+
+  /* Grid view for rate mode */
+  .grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 16px;
+  }
+  .grid-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .grid-card .preview { display: grid; grid-template-columns: 1fr 1fr; }
+  .grid-card .preview > div {
+    padding: 18px 14px;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .grid-card .preview img { max-width: 100%; max-height: 58px; height: auto; }
+  .grid-card .light { background: #fff; color: #111; }
+  .grid-card .dark { background: var(--navy); color: var(--ice); }
+  .grid-card .info {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+    background: #fafbfc;
+  }
+  .grid-card .info h4 { margin: 0; font-size: 13px; font-weight: 700; }
+  .grid-card .info .num-mini {
+    font-size: 10px; color: var(--cyan); font-family: ui-monospace, monospace;
+    background: #ecfeff; padding: 2px 6px; border-radius: 3px; font-weight: 700;
+  }
+  .grid-card .rating-row { padding: 10px 14px; border-top: 1px solid var(--border); }
+  .grid-card .rate-btn { width: 24px; height: 24px; font-size: 11px; }
+
+  /* COMPARE MODE */
+  .compare-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .compare-instructions {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .compare-card {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .compare-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+  .compare-card .preview { display: grid; grid-template-columns: 1fr 1fr; }
+  .compare-card .preview > div {
+    padding: 28px 18px;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .compare-card .preview img { max-width: 100%; max-height: 90px; height: auto; }
+  .compare-card .light { background: #fff; color: #111; }
+  .compare-card .dark { background: var(--navy); color: var(--ice); }
+  .compare-card .info {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: #fafbfc;
+  }
+  .compare-card .info h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .compare-card .info .num { font-size: 11px; color: var(--cyan); font-family: ui-monospace, monospace; }
+  .compare-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .compare-stats {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* RESULTS MODE */
+  .results-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .stat-card .label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .stat-card .value { font-size: 28px; font-weight: 800; margin-top: 4px; }
+  .stat-card .value .sub { font-size: 14px; color: var(--muted); font-weight: 500; }
+
+  .leaderboard { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+  .leaderboard h2 { margin: 0; padding: 16px 20px; font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); background: #fafbfc; }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 1fr 90px 80px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank {
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--cyan);
+  }
+  .lb-rank.gold { color: #ca8a04; }
+  .lb-rank.silver { color: #64748b; }
+  .lb-rank.bronze { color: #a16207; }
+  .lb-preview { display: flex; align-items: center; gap: 12px; }
+  .lb-preview img { max-height: 40px; max-width: 120px; width: auto; }
+  .lb-name { font-weight: 600; }
+  .lb-score-chip {
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--cyan);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .lb-wins {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+  }
+  @media (max-width: 640px) {
+    .lb-row { grid-template-columns: 30px 1fr 70px; grid-template-areas: "rank preview score" "rank name score"; }
+    .lb-preview { grid-area: preview; }
+    .lb-rank { grid-area: rank; }
+    .lb-name { grid-area: name; }
+    .lb-score-chip { grid-area: score; }
+    .lb-wins { display: none; }
+  }
+
+  .export-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .export-box h2 { margin: 0 0 12px; font-size: 16px; }
+  .export-box pre {
+    background: var(--navy);
+    color: var(--ice);
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    overflow-x: auto;
+    font-family: ui-monospace, monospace;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state h3 { color: var(--text); margin-bottom: 6px; }
+
+  .keyboard-hint {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+  }
+  .keyboard-hint kbd {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Archifex <span>Logo Rating</span></h1>
+  <div class="tabs">
+    <button class="tab active" data-tab="rate">Rate</button>
+    <button class="tab" data-tab="compare">Compare</button>
+    <button class="tab" data-tab="results">Results</button>
+  </div>
+  <div class="toolbar-actions">
+    <span class="progress-chip" id="progress">0 / 30 rated</span>
+    <button class="btn ghost" onclick="resetAll()">Reset</button>
+  </div>
+</div>
+
+<!-- RATE PANEL -->
+<div class="panel active" id="panel-rate">
+  <div class="rate-header">
+    <div>
+      <strong style="font-size:15px">Rate each logo 0-10.</strong>
+      <span style="color: var(--muted); margin-left: 8px; font-size: 13px">Use number keys to rate fast (0=terrible, 5=neutral, 9/0=love).</span>
+    </div>
+    <div class="view-toggle">
+      <button class="active" data-view="single">One at a time</button>
+      <button data-view="grid">All at once</button>
+    </div>
+  </div>
+
+  <!-- Single-view mode -->
+  <div id="single-view">
+    <div class="single-card">
+      <div class="nav-bar">
+        <span class="counter" id="counter">1 of 30</span>
+        <div class="btns">
+          <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+          <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+        </div>
+      </div>
+      <div class="single-preview">
+        <div class="light"><img id="single-img-light" src="" alt=""></div>
+        <div class="dark"><img id="single-img-dark" src="" alt=""></div>
+      </div>
+      <div class="single-meta">
+        <h3><span class="num-big" id="single-num"></span><span id="single-name"></span></h3>
+        <p id="single-desc"></p>
+      </div>
+      <div class="rating-row">
+        <span class="label">Score:</span>
+        <div class="rating-buttons" id="single-rating"></div>
+        <button class="fav-btn" id="fav-btn" onclick="toggleFav()">☆ Favorite</button>
+      </div>
+    </div>
+    <div class="keyboard-hint">
+      <kbd>0</kbd>–<kbd>9</kbd> rate · <kbd>Q</kbd> = 10 · <kbd>F</kbd> favorite · <kbd>←</kbd> <kbd>→</kbd> navigate
+    </div>
+  </div>
+
+  <!-- Grid-view mode -->
+  <div id="grid-view" class="grid-view" style="display: none;"></div>
+</div>
+
+<!-- COMPARE PANEL -->
+<div class="panel" id="panel-compare">
+  <div class="compare-container">
+    <p class="compare-instructions">Click the logo you prefer. We'll show you random pairs. Your preferences boost scores over time.</p>
+    <div class="compare-grid" id="compare-grid"></div>
+    <div class="compare-controls">
+      <button class="btn ghost" onclick="skipCompare()">Skip (space)</button>
+      <button class="btn" onclick="newPair()">New Pair</button>
+    </div>
+    <div class="compare-stats" id="compare-stats">0 comparisons made</div>
+    <div class="keyboard-hint">
+      <kbd>←</kbd> pick left · <kbd>→</kbd> pick right · <kbd>space</kbd> skip
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS PANEL -->
+<div class="panel" id="panel-results">
+  <div class="results-summary" id="results-summary"></div>
+
+  <div class="leaderboard">
+    <h2>🏆 Top 10 by Average Score</h2>
+    <div id="top-rated"></div>
+  </div>
+
+  <div class="leaderboard">
+    <h2>⭐ Favorites</h2>
+    <div id="favorites-list"></div>
+  </div>
+
+  <div class="leaderboard">
+    <h2>⚔️ Top 10 by Head-to-Head Win Rate</h2>
+    <div id="top-h2h"></div>
+  </div>
+
+  <div class="export-box">
+    <h2>Export results</h2>
+    <div style="display:flex; gap:8px; flex-wrap: wrap; margin-bottom: 12px;">
+      <button class="btn" onclick="copySummary()">Copy Summary</button>
+      <button class="btn ghost" onclick="downloadJSON()">Download JSON</button>
+    </div>
+    <pre id="export-preview"></pre>
+  </div>
+</div>
+
+<script>
+const LOGOS = [
+  { id: 1, slug: "01-blueprint-wireframe", name: "Blueprint Wireframe", desc: "A drafted with dashed construction lines, apex crosshair, height dimension, revision/sheet numbers — like a real architectural sheet." },
+  { id: 2, slug: "02-roman-inscription", name: "Roman Inscription", desc: "Trajan-style capitals referencing Roman monuments. Latin motto 'Qvi aedificat web' = he who builds the web." },
+  { id: 3, slug: "03-pitched-roof-glyph", name: "Pitched Roof Glyph", desc: "Just a roof silhouette sitting on a foundation line — simultaneously A and house. Minimal, suggestive." },
+  { id: 4, slug: "04-skyscraper", name: "Skyscraper", desc: "Tapering tower with horizontal window bands + antenna spire. Urban, ambitious, permanent." },
+  { id: 5, slug: "05-compass", name: "Compass", desc: "Drafting compass — pivot at apex, arc being drawn at base, crossbar = the drawn line. Tool of the craft." },
+  { id: 6, slug: "06-isometric", name: "Isometric Block", desc: "Single 3D prism with crossbar groove cut into the top face. Clean, architectural, solid." },
+  { id: 7, slug: "07-modular-blocks", name: "Modular Blocks", desc: "Mixed-size blocks with depth shading + highlighted 'keystone' block in bright cyan at the crossbar." },
+  { id: 8, slug: "08-constellation", name: "Truss / Constellation", desc: "Engineering truss with cross-bracing and riveted joints. A as load-bearing structure." },
+  { id: 9, slug: "09-stacked-wordmark", name: "Masthead Seal", desc: "Editorial masthead: circular seal with A + MMXXVI date, stacked ARCHI/FEX with rules and Latin motto. Full brand system." },
+  { id: 10, slug: "10-dimension-line", name: "Architectural Drawing", desc: "Full CAD treatment — [A] bracket icon + horizontal dimension line under wordmark + vertical dimension on side." },
+  { id: 11, slug: "11-isometric-cubes", name: "Isometric Cubes", desc: "A built from 10 isometric unit cubes. The platonic ideal of 'built from blocks.'" },
+  { id: 12, slug: "12-exploded-construction", name: "Exploded Construction", desc: "Three parts — apex / crossbar / legs — separated as if mid-assembly. Shows we understand construction." },
+  { id: 13, slug: "13-wireframe-isometric", name: "Wireframe Isometric", desc: "See-through 3D — every edge visible, no fills. Engineering model meets blueprint. 'We show our work.'" },
+  { id: 14, slug: "14-keystone-arch", name: "Keystone Arch", desc: "Simplified arch with keystone A integrated INTO the arch apex. 'Keystone of your stack.'" },
+  { id: 15, slug: "15-process-triptych", name: "Process (Single A)", desc: "ONE A sliced vertically into thirds: sketched / blueprint / built. Full lifecycle in one mark." },
+  { id: 16, slug: "16-scaffold", name: "Scaffold", desc: "Solid A wrapped in real scaffolding — thick pipes, diagonal braces, bolted joints, red safety flag." },
+  { id: 17, slug: "17-roof-monogram", name: "Roof Monogram", desc: "Just the roof + foundation. No doors, no windows, no walls. Viewer fills in 'house.'" },
+  { id: 18, slug: "18-carved-stone", name: "Carved Stone", desc: "Latin etymology: ARCHI (chief) + FEX (maker, from facere) = master builder. Parallel to artifex, pontifex, opifex." },
+  { id: 19, slug: "19-tessellation", name: "Tessellation", desc: "Triangular tiles tessellate into an A, fading outward. Keystone tile highlighted. 'Modular by design.'" },
+  { id: 20, slug: "20-af-ligature", name: "AF Ligature", desc: "A and F fused into a single typographic mark — they share the crossbar. Literary, distinctive." },
+  { id: 21, slug: "21-construction-crane", name: "Construction Crane", desc: "Solid A with tower crane rising from the apex. Actively building." },
+  { id: 22, slug: "22-rebar", name: "Rebar Framework", desc: "Reinforcement steel before the concrete pour. Diagonals + horizontal ties + tie-wire dots." },
+  { id: 23, slug: "23-bauhaus", name: "Bauhaus", desc: "Circle + triangle + rectangle + dot — Bauhaus primary shapes composing an A. Form follows function." },
+  { id: 24, slug: "24-monolith", name: "Monolith", desc: "Thick carved A-slab with depth shadow + etched crossbar groove. Permanent, weighty." },
+  { id: 25, slug: "25-paper-fold", name: "Paper Fold", desc: "A as folded paper — mountain fold center, valley fold at crossbar. Architectural origami." },
+  { id: 26, slug: "26-circuit", name: "Circuit", desc: "A drawn as PCB traces with 90° bends, solder pads, vias. Tech version of the blueprint idea." },
+  { id: 27, slug: "27-art-deco", name: "Art Deco", desc: "Stepped Chrysler-building silhouette — layered triangles with horizontal deco lines. 1920s optimism." },
+  { id: 28, slug: "28-ribbon", name: "Ribbon", desc: "A formed by a single continuous ribbon folding back on itself. V-notched ends, crease at apex." },
+  { id: 29, slug: "29-typographic-mark", name: "Typographic Mark", desc: "Custom serif A letterform — strong axis, serif terminals, accent crossbar. Paired with Didot-style wordmark." },
+  { id: 30, slug: "30-letterpress", name: "Letterpress", desc: "ARCHIFEX pressed into paper — emboss gradient, corner ornaments, classical divider. Craft of print." },
+];
+
+// State
+let state = {
+  ratings: {},      // { logoId: 0-10 }
+  favorites: {},    // { logoId: true }
+  h2hWins: {},      // { logoId: count }
+  h2hPlays: {},     // { logoId: count }
+  comparisons: 0,
+  currentIdx: 0,
+  viewMode: 'single',
+  currentPair: null,
+};
+
+const STORAGE_KEY = 'archifex-logo-ratings-v1';
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function load() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try {
+      state = { ...state, ...JSON.parse(raw) };
+    } catch {}
+  }
+}
+
+function getRating(id) {
+  return state.ratings[id] !== undefined ? state.ratings[id] : null;
+}
+
+function setRating(id, rating) {
+  state.ratings[id] = rating;
+  save();
+  renderProgress();
+  if (state.viewMode === 'single') renderSingle();
+  if (state.viewMode === 'grid') renderGrid();
+}
+
+function toggleFavorite(id) {
+  state.favorites[id] = !state.favorites[id];
+  if (!state.favorites[id]) delete state.favorites[id];
+  save();
+  if (state.viewMode === 'single') renderSingle();
+  if (state.viewMode === 'grid') renderGrid();
+}
+
+function toggleFav() {
+  const logo = LOGOS[state.currentIdx];
+  toggleFavorite(logo.id);
+}
+
+function renderProgress() {
+  const count = Object.keys(state.ratings).length;
+  document.getElementById('progress').textContent = `${count} / 30 rated`;
+}
+
+// Build rating buttons
+function buildRatingButtons(container, logoId, size = 'normal') {
+  container.innerHTML = '';
+  for (let i = 0; i <= 10; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'rate-btn';
+    btn.textContent = i;
+    btn.dataset.value = i;
+    const current = getRating(logoId);
+    if (current === i) {
+      btn.classList.add('selected');
+      if (i === 0) btn.classList.add('selected-0');
+      else if (i <= 4) btn.classList.add('selected-low');
+      else if (i >= 7) btn.classList.add('selected-high');
+    }
+    btn.onclick = (e) => { e.stopPropagation(); setRating(logoId, i); };
+    container.appendChild(btn);
+  }
+}
+
+// SINGLE VIEW
+function renderSingle() {
+  const logo = LOGOS[state.currentIdx];
+  document.getElementById('counter').textContent = `${state.currentIdx + 1} of ${LOGOS.length}`;
+  document.getElementById('single-num').textContent = String(logo.id).padStart(2, '0');
+  document.getElementById('single-name').textContent = logo.name;
+  document.getElementById('single-desc').textContent = logo.desc;
+  document.getElementById('single-img-light').src = logo.slug + '.svg';
+  document.getElementById('single-img-dark').src = logo.slug + '.svg';
+  document.getElementById('prevBtn').disabled = state.currentIdx === 0;
+  document.getElementById('nextBtn').disabled = state.currentIdx === LOGOS.length - 1;
+  buildRatingButtons(document.getElementById('single-rating'), logo.id);
+  const favBtn = document.getElementById('fav-btn');
+  if (state.favorites[logo.id]) {
+    favBtn.classList.add('active');
+    favBtn.textContent = '★ Favorite';
+  } else {
+    favBtn.classList.remove('active');
+    favBtn.textContent = '☆ Favorite';
+  }
+}
+
+function navigate(dir) {
+  const next = state.currentIdx + dir;
+  if (next >= 0 && next < LOGOS.length) {
+    state.currentIdx = next;
+    renderSingle();
+  }
+}
+
+// GRID VIEW
+function renderGrid() {
+  const container = document.getElementById('grid-view');
+  container.innerHTML = '';
+  LOGOS.forEach(logo => {
+    const card = document.createElement('div');
+    card.className = 'grid-card';
+    card.innerHTML = `
+      <div class="preview">
+        <div class="light"><img src="${logo.slug}.svg" alt=""></div>
+        <div class="dark"><img src="${logo.slug}.svg" alt=""></div>
+      </div>
+      <div class="info">
+        <h4>${logo.name}</h4>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button class="fav-btn ${state.favorites[logo.id] ? 'active' : ''}" style="padding:4px 8px; font-size:11px;" onclick="toggleFavorite(${logo.id})">${state.favorites[logo.id] ? '★' : '☆'}</button>
+          <span class="num-mini">${String(logo.id).padStart(2,'0')}</span>
+        </div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-buttons" data-logo="${logo.id}"></div>
+      </div>
+    `;
+    container.appendChild(card);
+    buildRatingButtons(card.querySelector('.rating-buttons'), logo.id);
+  });
+}
+
+// COMPARE MODE
+function newPair() {
+  const availableIds = LOGOS.map(l => l.id);
+  let a, b;
+  // Prefer pairs with fewer plays
+  const playsList = availableIds.map(id => ({ id, plays: state.h2hPlays[id] || 0 }));
+  playsList.sort((x, y) => x.plays - y.plays);
+  const pool = playsList.slice(0, 16).map(p => p.id);
+  a = pool[Math.floor(Math.random() * pool.length)];
+  do {
+    b = pool[Math.floor(Math.random() * pool.length)];
+  } while (b === a);
+  state.currentPair = [a, b];
+  renderCompare();
+}
+
+function renderCompare() {
+  if (!state.currentPair) newPair();
+  const [aId, bId] = state.currentPair;
+  const a = LOGOS.find(l => l.id === aId);
+  const b = LOGOS.find(l => l.id === bId);
+  const grid = document.getElementById('compare-grid');
+  grid.innerHTML = `
+    <div class="compare-card" onclick="pickWinner(${aId})">
+      <div class="preview">
+        <div class="light"><img src="${a.slug}.svg" alt=""></div>
+        <div class="dark"><img src="${a.slug}.svg" alt=""></div>
+      </div>
+      <div class="info">
+        <h3>${a.name}</h3>
+        <div class="num">#${String(a.id).padStart(2,'0')}</div>
+      </div>
+    </div>
+    <div class="compare-card" onclick="pickWinner(${bId})">
+      <div class="preview">
+        <div class="light"><img src="${b.slug}.svg" alt=""></div>
+        <div class="dark"><img src="${b.slug}.svg" alt=""></div>
+      </div>
+      <div class="info">
+        <h3>${b.name}</h3>
+        <div class="num">#${String(b.id).padStart(2,'0')}</div>
+      </div>
+    </div>
+  `;
+  document.getElementById('compare-stats').textContent = `${state.comparisons} comparisons made`;
+}
+
+function pickWinner(winnerId) {
+  const [a, b] = state.currentPair;
+  const loserId = winnerId === a ? b : a;
+  state.h2hWins[winnerId] = (state.h2hWins[winnerId] || 0) + 1;
+  state.h2hPlays[winnerId] = (state.h2hPlays[winnerId] || 0) + 1;
+  state.h2hPlays[loserId] = (state.h2hPlays[loserId] || 0) + 1;
+  state.comparisons++;
+  save();
+  newPair();
+}
+
+function skipCompare() {
+  newPair();
+}
+
+// RESULTS MODE
+function renderResults() {
+  const ratedIds = Object.keys(state.ratings).map(Number);
+  const avgScore = ratedIds.length ? (ratedIds.reduce((s, id) => s + state.ratings[id], 0) / ratedIds.length).toFixed(1) : '—';
+  const favCount = Object.keys(state.favorites).length;
+  const topRated = ratedIds.length ? [...ratedIds].sort((a, b) => state.ratings[b] - state.ratings[a])[0] : null;
+
+  document.getElementById('results-summary').innerHTML = `
+    <div class="stat-card"><div class="label">Rated</div><div class="value">${ratedIds.length}<span class="sub"> / 30</span></div></div>
+    <div class="stat-card"><div class="label">Avg score</div><div class="value">${avgScore}</div></div>
+    <div class="stat-card"><div class="label">Favorites</div><div class="value">${favCount}</div></div>
+    <div class="stat-card"><div class="label">Comparisons</div><div class="value">${state.comparisons}</div></div>
+  `;
+
+  // Top 10 by rating
+  const sortedByRating = LOGOS
+    .filter(l => state.ratings[l.id] !== undefined)
+    .map(l => ({ ...l, score: state.ratings[l.id] }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
+  document.getElementById('top-rated').innerHTML = sortedByRating.length
+    ? sortedByRating.map((l, i) => renderLbRow(l, i, l.score + '/10', null)).join('')
+    : '<div class="empty-state"><h3>No ratings yet</h3><p>Rate some logos first.</p></div>';
+
+  // Favorites list
+  const favs = LOGOS.filter(l => state.favorites[l.id]);
+  document.getElementById('favorites-list').innerHTML = favs.length
+    ? favs.map((l, i) => renderLbRow(l, i, state.ratings[l.id] !== undefined ? state.ratings[l.id] + '/10' : '—', null)).join('')
+    : '<div class="empty-state"><h3>No favorites yet</h3><p>Mark some with ★ to see them here.</p></div>';
+
+  // Top by H2H
+  const h2h = LOGOS
+    .filter(l => (state.h2hPlays[l.id] || 0) > 0)
+    .map(l => {
+      const wins = state.h2hWins[l.id] || 0;
+      const plays = state.h2hPlays[l.id] || 0;
+      return { ...l, wins, plays, rate: wins / plays };
+    })
+    .sort((a, b) => b.rate - a.rate || b.plays - a.plays)
+    .slice(0, 10);
+
+  document.getElementById('top-h2h').innerHTML = h2h.length
+    ? h2h.map((l, i) => renderLbRow(l, i, Math.round(l.rate * 100) + '%', `${l.wins}/${l.plays} wins`)).join('')
+    : '<div class="empty-state"><h3>No comparisons yet</h3><p>Try the Compare tab.</p></div>';
+
+  // Export preview
+  updateExport();
+}
+
+function renderLbRow(logo, idx, score, wins) {
+  const rankClass = idx === 0 ? 'gold' : idx === 1 ? 'silver' : idx === 2 ? 'bronze' : '';
+  return `
+    <div class="lb-row">
+      <div class="lb-rank ${rankClass}">#${idx + 1}</div>
+      <div class="lb-preview"><img src="${logo.slug}.svg" alt=""></div>
+      <div class="lb-name">${logo.name}<div style="font-size:11px; color:var(--muted); font-family:ui-monospace,monospace;">${String(logo.id).padStart(2,'0')}</div></div>
+      <div class="lb-score-chip">${score}</div>
+      <div class="lb-wins">${wins || ''}</div>
+    </div>
+  `;
+}
+
+function updateExport() {
+  const data = {
+    rated_at: new Date().toISOString(),
+    total_rated: Object.keys(state.ratings).length,
+    comparisons: state.comparisons,
+    top_5_by_rating: LOGOS
+      .filter(l => state.ratings[l.id] !== undefined)
+      .map(l => ({ id: l.id, name: l.name, score: state.ratings[l.id] }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5),
+    favorites: LOGOS.filter(l => state.favorites[l.id]).map(l => ({ id: l.id, name: l.name })),
+    all_ratings: LOGOS.map(l => ({ id: l.id, name: l.name, score: state.ratings[l.id] ?? null })),
+  };
+  document.getElementById('export-preview').textContent = JSON.stringify(data, null, 2);
+}
+
+function copySummary() {
+  const data = {
+    top_5: LOGOS
+      .filter(l => state.ratings[l.id] !== undefined)
+      .sort((a, b) => state.ratings[b.id] - state.ratings[a.id])
+      .slice(0, 5)
+      .map((l, i) => `${i + 1}. #${String(l.id).padStart(2, '0')} ${l.name} — ${state.ratings[l.id]}/10`),
+    favorites: LOGOS.filter(l => state.favorites[l.id]).map(l => `#${String(l.id).padStart(2, '0')} ${l.name}`),
+  };
+  const text = `ARCHIFEX LOGO RATINGS
+=====================
+Top 5:
+${data.top_5.join('\n')}
+
+Favorites:
+${data.favorites.length ? data.favorites.join('\n') : '(none)'}
+`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Summary copied to clipboard!');
+  });
+}
+
+function downloadJSON() {
+  const data = {
+    rated_at: new Date().toISOString(),
+    ratings: state.ratings,
+    favorites: state.favorites,
+    h2h_wins: state.h2hWins,
+    h2h_plays: state.h2hPlays,
+    comparisons: state.comparisons,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `archifex-ratings-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll() {
+  if (!confirm('Reset all ratings, favorites, and comparisons?')) return;
+  state = {
+    ratings: {}, favorites: {}, h2hWins: {}, h2hPlays: {},
+    comparisons: 0, currentIdx: 0, viewMode: state.viewMode, currentPair: null
+  };
+  localStorage.removeItem(STORAGE_KEY);
+  renderProgress();
+  renderSingle();
+  renderGrid();
+  if (document.getElementById('panel-results').classList.contains('active')) renderResults();
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panelName = tab.dataset.tab;
+    document.getElementById('panel-' + panelName).classList.add('active');
+    if (panelName === 'compare') renderCompare();
+    if (panelName === 'results') renderResults();
+  };
+});
+
+// View toggle (single / grid)
+document.querySelectorAll('.view-toggle button').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('.view-toggle button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.viewMode = b.dataset.view;
+    if (state.viewMode === 'single') {
+      document.getElementById('single-view').style.display = '';
+      document.getElementById('grid-view').style.display = 'none';
+      renderSingle();
+    } else {
+      document.getElementById('single-view').style.display = 'none';
+      document.getElementById('grid-view').style.display = 'grid';
+      renderGrid();
+    }
+  };
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Only for rate mode single-view and compare
+  const activeTab = document.querySelector('.tab.active').dataset.tab;
+  if (activeTab === 'rate' && state.viewMode === 'single') {
+    if (e.key >= '0' && e.key <= '9') {
+      const logo = LOGOS[state.currentIdx];
+      setRating(logo.id, parseInt(e.key));
+      e.preventDefault();
+    } else if (e.key === 'q' || e.key === 'Q') {
+      const logo = LOGOS[state.currentIdx];
+      setRating(logo.id, 10);
+    } else if (e.key === 'f' || e.key === 'F') {
+      toggleFav();
+    } else if (e.key === 'ArrowLeft') {
+      navigate(-1);
+    } else if (e.key === 'ArrowRight') {
+      navigate(1);
+    }
+  } else if (activeTab === 'compare') {
+    if (e.key === 'ArrowLeft' && state.currentPair) {
+      pickWinner(state.currentPair[0]);
+    } else if (e.key === 'ArrowRight' && state.currentPair) {
+      pickWinner(state.currentPair[1]);
+    } else if (e.key === ' ') {
+      skipCompare();
+      e.preventDefault();
+    }
+  }
+});
+
+// Init
+load();
+renderProgress();
+renderSingle();
+</script>
+</body>
+</html>

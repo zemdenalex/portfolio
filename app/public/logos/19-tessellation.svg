@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Tessellation with fade + highlighted keystone tile -->
+  <g transform="translate(6 6)">
+    <!-- Bottom halo tiles (fade outward — suggests infinite scale) -->
+    <g opacity="0.25">
+      <path d="M-8 60 L-2 72 L-14 72 Z" fill="#0891b2"/>
+      <path d="M62 60 L68 72 L56 72 Z" fill="#0891b2"/>
+    </g>
+    <!-- Row 1 (apex): 1 tile -->
+    <path d="M26 0 L34 14 L18 14 Z" fill="#0891b2"/>
+    <!-- Row 2: 1 up + 2 down -->
+    <path d="M18 14 L26 28 L10 28 Z" fill="#0891b2" opacity="0.85"/>
+    <path d="M26 14 L18 28 L34 28 Z" fill="#0891b2" opacity="0.4"/>
+    <path d="M34 14 L42 28 L26 28 Z" fill="#0891b2" opacity="0.85"/>
+    <!-- Row 3 (crossbar): KEYSTONE tile highlighted bright cyan, larger, slightly raised feel -->
+    <path d="M10 28 L18 42 L2 42 Z" fill="#0891b2" opacity="0.9"/>
+    <path d="M18 28 L10 42 L26 42 Z" fill="#0891b2" opacity="0.45"/>
+    <!-- Keystone -->
+    <g>
+      <path d="M26 26 L36 44 L16 44 Z" fill="#22d3ee"/>
+      <path d="M26 31 L33 43 L19 43 Z" fill="#0891b2" opacity="0.25"/>
+      <!-- Small label dot on keystone -->
+      <circle cx="26" cy="37" r="1.5" fill="var(--bg, #0c1929)"/>
+    </g>
+    <path d="M34 28 L26 42 L42 42 Z" fill="#0891b2" opacity="0.45"/>
+    <path d="M42 28 L50 42 L34 42 Z" fill="#0891b2" opacity="0.9"/>
+    <!-- Row 4: legs -->
+    <path d="M2 42 L10 56 L-6 56 Z" fill="#0891b2" opacity="0.7"/>
+    <path d="M10 42 L2 56 L18 56 Z" fill="#0891b2" opacity="0.3"/>
+    <path d="M42 42 L50 56 L34 56 Z" fill="#0891b2" opacity="0.3"/>
+    <path d="M50 42 L58 56 L42 56 Z" fill="#0891b2" opacity="0.7"/>
+    <!-- Row 5 (base extended — tiles fading out) -->
+    <path d="M-6 56 L2 68 L-14 68 Z" fill="#0891b2" opacity="0.4"/>
+    <path d="M58 56 L66 68 L50 68 Z" fill="#0891b2" opacity="0.4"/>
+    <!-- Micro dots suggesting tessellation continues -->
+    <g fill="#0891b2" opacity="0.3">
+      <circle cx="-10" cy="52" r="0.75"/>
+      <circle cx="60" cy="52" r="0.75"/>
+      <circle cx="-16" cy="64" r="0.75"/>
+      <circle cx="68" cy="64" r="0.75"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="84" y="42" font-family="system-ui, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.3" fill="currentColor">Archifex</text>
+  <text x="84" y="56" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">MODULAR · BY · DESIGN</text>
+</svg>

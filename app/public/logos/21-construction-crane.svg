@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+  <!-- A with construction crane extending from apex -->
+  <g transform="translate(4 4)">
+    <!-- Main A -->
+    <path d="M28 14 L52 66 L4 66 Z" fill="currentColor"/>
+    <rect x="14" y="48" width="28" height="3" fill="var(--bg, #0c1929)"/>
+    <path d="M28 28 L44 60 L12 60 Z" fill="var(--bg, #0c1929)" opacity="0.35"/>
+    <!-- Crane mast (extends up from apex) -->
+    <line x1="28" y1="14" x2="28" y2="2" stroke="#0891b2" stroke-width="2"/>
+    <!-- Crane boom (horizontal arm) -->
+    <line x1="12" y1="4" x2="48" y2="4" stroke="#0891b2" stroke-width="2"/>
+    <!-- Counter-jib -->
+    <line x1="18" y1="2" x2="18" y2="6" stroke="#0891b2" stroke-width="2"/>
+    <line x1="12" y1="4" x2="28" y2="-2" stroke="#0891b2" stroke-width="1"/>
+    <line x1="48" y1="4" x2="28" y2="-2" stroke="#0891b2" stroke-width="1"/>
+    <!-- Cable + hook -->
+    <line x1="44" y1="4" x2="44" y2="20" stroke="#0891b2" stroke-width="0.75"/>
+    <rect x="42" y="20" width="4" height="3" fill="#0891b2"/>
+    <!-- Foundation -->
+    <line x1="-2" y1="68" x2="58" y2="68" stroke="currentColor" stroke-width="1"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="42" font-family="system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.3" fill="currentColor">Archifex</text>
+  <text x="80" y="56" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">HEAVY · LIFTING</text>
+</svg>

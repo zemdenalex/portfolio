@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" fill="none">
+  <!-- Roof + foundation only, no door/windows. Minimal house hint, A is explicit -->
+  <g transform="translate(8 6)">
+    <!-- Roof triangle (filled, is the A) -->
+    <path d="M28 0 L52 28 L4 28 Z" fill="#0891b2"/>
+    <!-- Crossbar (A's bar, also roof eave line) -->
+    <rect x="14" y="18" width="28" height="3" fill="var(--bg, #0c1929)"/>
+    <!-- Inner negative space triangle for more A readability -->
+    <path d="M28 8 L42 22 L14 22 Z" fill="var(--bg, #0c1929)" opacity="0.3"/>
+    <!-- Foundation: short horizontal bar (suggests house base, not full walls) -->
+    <rect x="-4" y="34" width="64" height="3" fill="currentColor"/>
+    <rect x="-8" y="40" width="72" height="1.5" fill="#0891b2" opacity="0.5"/>
+    <!-- Two tiny support posts (hint of house without drawing it) -->
+    <rect x="4" y="30" width="2" height="4" fill="currentColor" opacity="0.6"/>
+    <rect x="50" y="30" width="2" height="4" fill="currentColor" opacity="0.6"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="40" font-family="system-ui, sans-serif" font-size="26" font-weight="800" letter-spacing="-0.5" fill="currentColor">Archifex</text>
+  <text x="80" y="54" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">SHELTER FOR IDEAS</text>
+</svg>

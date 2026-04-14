@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+  <!-- Art Deco stepped A (Chrysler-building vibe) -->
+  <g transform="translate(10 4)">
+    <!-- Stepped spire top (layered triangles + accent lines) -->
+    <path d="M24 0 L26 4 L22 4 Z" fill="#0891b2"/>
+    <path d="M24 4 L30 14 L18 14 Z" fill="currentColor"/>
+    <path d="M24 14 L34 28 L14 28 Z" fill="currentColor"/>
+    <path d="M24 28 L40 48 L8 48 Z" fill="currentColor"/>
+    <!-- Base spread -->
+    <path d="M24 48 L46 72 L2 72 Z" fill="currentColor"/>
+    <!-- Accent stepped lines (Deco horizontals) -->
+    <g fill="#0891b2">
+      <rect x="16" y="26" width="16" height="1.5"/>
+      <rect x="12" y="36" width="24" height="1.5"/>
+      <rect x="8" y="46" width="32" height="2"/>
+      <rect x="4" y="58" width="40" height="1.5"/>
+      <rect x="2" y="68" width="44" height="2"/>
+    </g>
+    <!-- Deco A crossbar (raised) -->
+    <rect x="14" y="50" width="20" height="3" fill="#0891b2"/>
+    <!-- Inner inverted triangle -->
+    <path d="M24 36 L36 64 L12 64 Z" fill="var(--bg, #0c1929)" opacity="0.4"/>
+    <!-- Base scale lines -->
+    <g stroke="#0891b2" stroke-width="0.75" opacity="0.5">
+      <line x1="-4" y1="74" x2="52" y2="74"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="74" y="44" font-family="'Futura', 'Century Gothic', sans-serif" font-size="24" font-weight="400" letter-spacing="3" fill="currentColor">ARCHIFEX</text>
+  <text x="74" y="60" font-family="ui-monospace, monospace" font-size="7" letter-spacing="4" fill="#0891b2" opacity="0.7">MMXXVI</text>
+</svg>

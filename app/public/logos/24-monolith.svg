@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Thick monolithic A slab with etched groove + edge depth -->
+  <g transform="translate(4 4)">
+    <!-- Depth shadow (bottom) -->
+    <path d="M28 8 L56 64 L54 64 L28 12 L2 64 L0 64 Z" fill="#0891b2" opacity="0.35"/>
+    <!-- Main slab -->
+    <path d="M28 4 L56 60 L40 60 L34 46 L22 46 L16 60 L0 60 Z" fill="currentColor"/>
+    <!-- Negative-space inner triangle (where crossbar opens) -->
+    <path d="M28 16 L39 42 L17 42 Z" fill="var(--bg, #0c1929)"/>
+    <!-- Etched crossbar groove (accent) -->
+    <rect x="16" y="38" width="24" height="4" fill="#0891b2"/>
+    <rect x="16" y="36" width="24" height="1" fill="currentColor" opacity="0.4"/>
+    <!-- Edge highlight (top-left of A legs) -->
+    <g fill="#0891b2" opacity="0.6">
+      <path d="M28 4 L30 8 L4 60 L0 60 Z"/>
+    </g>
+    <!-- Scale ticks on right edge -->
+    <g stroke="#0891b2" stroke-width="0.75" opacity="0.7">
+      <line x1="60" y1="10" x2="63" y2="10"/>
+      <line x1="60" y1="24" x2="63" y2="24"/>
+      <line x1="60" y1="38" x2="63" y2="38"/>
+      <line x1="60" y1="52" x2="63" y2="52"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="40" font-family="system-ui, sans-serif" font-size="26" font-weight="800" letter-spacing="-0.8" fill="currentColor">Archifex</text>
+  <text x="80" y="54" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">SOLID · BY · DESIGN</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- A as circuit board traces + solder pads -->
+  <g transform="translate(6 4)">
+    <!-- Main trace paths (rounded corners like PCB traces) -->
+    <g stroke="#0891b2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <!-- Left leg with 90-degree corner bends -->
+      <path d="M6 62 L6 52 L12 46 L12 36 L18 30 L18 20 L24 14 L24 6"/>
+      <!-- Right leg -->
+      <path d="M48 62 L48 52 L42 46 L42 36 L36 30 L36 20 L30 14 L30 6"/>
+      <!-- Apex connecting segment -->
+      <path d="M24 6 L30 6"/>
+      <!-- Crossbar trace -->
+      <path d="M18 30 L36 30"/>
+      <!-- Extra branch traces -->
+      <path d="M18 20 L24 20 L24 14"/>
+      <path d="M36 20 L30 20 L30 14"/>
+    </g>
+    <!-- Solder pads at key junctions -->
+    <g fill="#0891b2">
+      <rect x="4" y="60" width="4" height="4" rx="1"/>
+      <rect x="46" y="60" width="4" height="4" rx="1"/>
+      <circle cx="27" cy="6" r="3"/>
+      <circle cx="18" cy="20" r="2"/>
+      <circle cx="36" cy="20" r="2"/>
+      <circle cx="18" cy="30" r="2"/>
+      <circle cx="36" cy="30" r="2"/>
+    </g>
+    <!-- Via markers (small circles with holes) -->
+    <g>
+      <circle cx="12" cy="36" r="1.5" fill="currentColor"/>
+      <circle cx="12" cy="36" r="0.5" fill="#0891b2"/>
+      <circle cx="42" cy="36" r="1.5" fill="currentColor"/>
+      <circle cx="42" cy="36" r="0.5" fill="#0891b2"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="78" y="40" font-family="ui-monospace, monospace" font-size="22" font-weight="700" letter-spacing="-0.3" fill="currentColor">archifex</text>
+  <text x="78" y="54" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">TRACE · SOLDER · BUILD</text>
+</svg>

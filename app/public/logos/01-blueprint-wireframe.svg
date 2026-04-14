@@ -1,21 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" fill="none">
-  <!-- Monogram A drawn as blueprint with dashed stroke + tick marks -->
-  <g stroke="#0891b2" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Left leg -->
-    <line x1="10" y1="54" x2="28" y2="12" stroke-dasharray="4 2"/>
-    <!-- Right leg -->
-    <line x1="28" y1="12" x2="46" y2="54" stroke-dasharray="4 2"/>
-    <!-- Crossbar -->
-    <line x1="18" y1="36" x2="38" y2="36"/>
-    <!-- Apex dot -->
-    <circle cx="28" cy="12" r="2" fill="#0891b2"/>
-    <!-- Measurement ticks on right -->
-    <line x1="50" y1="12" x2="54" y2="12"/>
-    <line x1="50" y1="54" x2="54" y2="54"/>
-    <line x1="52" y1="12" x2="52" y2="54" stroke-width="0.75" stroke-dasharray="2 2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 80" fill="none">
+  <!-- Architectural drawing: A with height dimension + scale label -->
+  <g transform="translate(18 10)">
+    <!-- A legs (dashed blueprint) -->
+    <g stroke="#0891b2" stroke-width="2" stroke-linecap="square" fill="none">
+      <line x1="6" y1="52" x2="26" y2="4" stroke-dasharray="5 2.5"/>
+      <line x1="26" y1="4" x2="46" y2="52" stroke-dasharray="5 2.5"/>
+      <!-- Solid crossbar -->
+      <line x1="15" y1="34" x2="37" y2="34" stroke-width="2.5"/>
+    </g>
+    <!-- Apex crosshair -->
+    <g stroke="#0891b2" stroke-width="1" fill="none">
+      <circle cx="26" cy="4" r="3"/>
+      <line x1="23" y1="4" x2="29" y2="4"/>
+      <line x1="26" y1="1" x2="26" y2="7"/>
+    </g>
+    <!-- Height dimension (left side) -->
+    <g stroke="#0891b2" stroke-width="0.75">
+      <line x1="-8" y1="4" x2="-8" y2="52"/>
+      <line x1="-10" y1="4" x2="-6" y2="4"/>
+      <line x1="-10" y1="52" x2="-6" y2="52"/>
+    </g>
+    <text x="-12" y="30" text-anchor="end" font-family="ui-monospace, monospace" font-size="6" fill="#0891b2" opacity="0.8">H</text>
+    <!-- Baseline -->
+    <line x1="-2" y1="56" x2="54" y2="56" stroke="currentColor" stroke-width="0.75" opacity="0.5"/>
+    <!-- Scale label bottom-right -->
+    <text x="54" y="66" text-anchor="end" font-family="ui-monospace, monospace" font-size="6" letter-spacing="1" fill="#0891b2" opacity="0.7">1:1</text>
   </g>
   <!-- Wordmark -->
-  <text x="68" y="40" font-family="ui-monospace, Menlo, monospace" font-size="22" font-weight="700" letter-spacing="1" fill="currentColor">ARCHIFEX</text>
-  <!-- Caption -->
-  <text x="68" y="54" font-family="ui-monospace, Menlo, monospace" font-size="8" letter-spacing="3" fill="#0891b2" opacity="0.7">WEB ARCHITECTURE STUDIO</text>
+  <text x="86" y="42" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="22" font-weight="700" letter-spacing="2" fill="currentColor">ARCHIFEX</text>
+  <text x="86" y="56" font-family="ui-monospace, monospace" font-size="7" letter-spacing="3" fill="#0891b2" opacity="0.7">REV · A   SHEET · 01</text>
 </svg>

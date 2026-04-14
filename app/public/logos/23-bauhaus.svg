@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" fill="none">
+  <!-- Bauhaus-style geometric composition forming A -->
+  <g transform="translate(8 6)">
+    <!-- Circle (base-left leg suggestion) -->
+    <circle cx="10" cy="54" r="14" fill="#0891b2" opacity="0.9"/>
+    <!-- Triangle (main apex + leg) -->
+    <path d="M32 2 L56 54 L12 54 Z" fill="currentColor"/>
+    <!-- Rectangle (crossbar) -->
+    <rect x="14" y="34" width="38" height="6" fill="#0891b2"/>
+    <!-- Small square accent (rule of thirds, upper right) -->
+    <rect x="42" y="8" width="10" height="10" fill="#0891b2" opacity="0.5"/>
+    <!-- Tiny dot (Bauhaus punctum) -->
+    <circle cx="50" cy="68" r="2.5" fill="currentColor"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="84" y="42" font-family="'Futura', 'Century Gothic', system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="0" fill="currentColor">Archifex</text>
+  <text x="84" y="58" font-family="ui-monospace, monospace" font-size="7" letter-spacing="4" fill="#0891b2" opacity="0.7">FORM · FOLLOWS · FUNCTION</text>
+</svg>

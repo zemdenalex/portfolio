@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Modular blocks with mixed sizes + subtle 3D + accent keystone -->
+  <g transform="translate(6 6)">
+    <!-- Row 1 (apex) - small 2x1 block -->
+    <g>
+      <rect x="21" y="0" width="12" height="8" fill="#0891b2"/>
+      <rect x="33" y="2" width="2" height="8" fill="#0891b2" opacity="0.4"/>
+      <rect x="23" y="8" width="12" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <!-- Row 2 - 2 blocks -->
+    <g>
+      <rect x="13" y="11" width="10" height="10" fill="#0891b2"/>
+      <rect x="23" y="13" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="15" y="21" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <g>
+      <rect x="31" y="11" width="10" height="10" fill="#0891b2"/>
+      <rect x="41" y="13" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="33" y="21" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <!-- Row 3 (crossbar) - keystone block in accent -->
+    <g>
+      <rect x="5" y="24" width="10" height="10" fill="#0891b2"/>
+      <rect x="15" y="26" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="7" y="34" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <!-- KEYSTONE (highlighted, slightly raised/lighter) -->
+    <g>
+      <rect x="19" y="22" width="16" height="12" fill="#22d3ee"/>
+      <rect x="35" y="24" width="2" height="12" fill="#22d3ee" opacity="0.5"/>
+      <rect x="21" y="34" width="16" height="2" fill="#22d3ee" opacity="0.7"/>
+      <!-- Tiny label mark on keystone -->
+      <rect x="25" y="26" width="4" height="4" fill="#0891b2" opacity="0.6"/>
+    </g>
+    <g>
+      <rect x="39" y="24" width="10" height="10" fill="#0891b2"/>
+      <rect x="49" y="26" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="41" y="34" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <!-- Row 4 - legs spread -->
+    <g>
+      <rect x="0" y="37" width="10" height="10" fill="#0891b2"/>
+      <rect x="10" y="39" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="2" y="47" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <g>
+      <rect x="44" y="37" width="10" height="10" fill="#0891b2"/>
+      <rect x="54" y="39" width="2" height="10" fill="#0891b2" opacity="0.4"/>
+      <rect x="46" y="47" width="10" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <!-- Row 5 - base 2x1 blocks -->
+    <g>
+      <rect x="-4" y="50" width="14" height="8" fill="#0891b2"/>
+      <rect x="10" y="52" width="2" height="8" fill="#0891b2" opacity="0.4"/>
+      <rect x="-2" y="58" width="14" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+    <g>
+      <rect x="44" y="50" width="14" height="8" fill="#0891b2"/>
+      <rect x="58" y="52" width="2" height="8" fill="#0891b2" opacity="0.4"/>
+      <rect x="46" y="58" width="14" height="2" fill="#0891b2" opacity="0.55"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="78" y="42" font-family="system-ui, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.5" fill="currentColor">Archifex</text>
+</svg>

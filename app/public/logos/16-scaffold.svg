@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" fill="none">
+  <!-- Real scaffolding: thick pipes, diagonal braces, safety flag -->
+  <g transform="translate(6 4)">
+    <!-- Solid A (being built) -->
+    <path d="M28 8 L52 60 L4 60 Z" fill="currentColor"/>
+    <rect x="14" y="42" width="28" height="3" fill="var(--bg, #0c1929)"/>
+    <path d="M28 22 L44 54 L12 54 Z" fill="var(--bg, #0c1929)" opacity="0.35"/>
+    <!-- Scaffold pipes (thick, in front of A) -->
+    <g stroke="#0891b2" stroke-width="2.5" stroke-linecap="round" fill="none">
+      <!-- Vertical pipes -->
+      <line x1="-2" y1="4" x2="-2" y2="64"/>
+      <line x1="58" y1="4" x2="58" y2="64"/>
+      <!-- Horizontal platforms -->
+      <line x1="-2" y1="20" x2="58" y2="20"/>
+      <line x1="-2" y1="40" x2="58" y2="40"/>
+      <line x1="-2" y1="60" x2="58" y2="60"/>
+    </g>
+    <!-- Diagonal braces (thicker than v1) -->
+    <g stroke="#0891b2" stroke-width="1.75" fill="none" opacity="0.85">
+      <line x1="-2" y1="20" x2="58" y2="40"/>
+      <line x1="58" y1="20" x2="-2" y2="40"/>
+      <line x1="-2" y1="40" x2="58" y2="60"/>
+      <line x1="58" y1="40" x2="-2" y2="60"/>
+    </g>
+    <!-- Connector joints (bolted) -->
+    <g fill="#0891b2">
+      <circle cx="-2" cy="20" r="2.5"/>
+      <circle cx="58" cy="20" r="2.5"/>
+      <circle cx="-2" cy="40" r="2.5"/>
+      <circle cx="58" cy="40" r="2.5"/>
+      <circle cx="-2" cy="60" r="2.5"/>
+      <circle cx="58" cy="60" r="2.5"/>
+    </g>
+    <!-- Safety flag at top-left -->
+    <g>
+      <line x1="-2" y1="4" x2="-2" y2="0" stroke="currentColor" stroke-width="1"/>
+      <path d="M-2 0 L10 2 L-2 6 Z" fill="#ef4444"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="42" font-family="system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="-0.3" fill="currentColor">Archifex</text>
+  <text x="80" y="56" font-family="ui-monospace, monospace" font-size="8" letter-spacing="3" fill="#0891b2" opacity="0.7">UNDER · CONSTRUCTION</text>
+</svg>

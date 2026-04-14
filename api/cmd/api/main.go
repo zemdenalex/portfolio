@@ -19,6 +19,7 @@ import (
 	"portfolio-api/internal/content"
 	"portfolio-api/internal/database"
 	"portfolio-api/internal/leads"
+	"portfolio-api/internal/logos"
 	"portfolio-api/internal/middleware"
 	"portfolio-api/internal/packages"
 	"portfolio-api/internal/portfolio"
@@ -56,6 +57,7 @@ func main() {
 	stylesService := styles.NewService(db.Pool)
 	packagesService := packages.NewService(db.Pool)
 	contentService := content.NewService(db.Pool)
+	logosService := logos.NewService(db.Pool)
 
 	// 5. Initialize handlers
 	authHandler := auth.NewHandler(authService)
@@ -65,6 +67,7 @@ func main() {
 	stylesHandler := styles.NewHandler(stylesService)
 	packagesHandler := packages.NewHandler(packagesService)
 	contentHandler := content.NewHandler(contentService)
+	logosHandler := logos.NewHandler(logosService)
 	uploadHandler := upload.NewHandler(cfg.Upload.Path, cfg.Upload.MaxSize)
 	screenshotService := screenshot.NewService(cfg.Upload.Path)
 	screenshotHandler := screenshot.NewHandler(screenshotService, stylesService)
@@ -139,6 +142,15 @@ func main() {
 
 			// Content
 			r.Get("/content", contentHandler.List)
+
+			// Logo ratings (public, session-based)
+			r.Post("/logos/sessions", logosHandler.CreateSession)
+			r.Get("/logos/sessions/{id}", logosHandler.GetSession)
+			r.Put("/logos/sessions/{id}", logosHandler.UpdateSession)
+			r.Post("/logos/sessions/{id}/rate", logosHandler.Rate)
+			r.Post("/logos/sessions/{id}/favorite", logosHandler.SetFavorite)
+			r.Post("/logos/sessions/{id}/compare", logosHandler.Compare)
+			r.Get("/logos/stats", logosHandler.Stats)
 		})
 
 		// Admin routes (auth required)

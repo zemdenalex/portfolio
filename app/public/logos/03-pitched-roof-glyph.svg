@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" fill="none">
+  <!-- Minimal house hint: triangular roof + foundation line doubles as A -->
+  <g transform="translate(8 6)">
+    <!-- Roof outline (A shape) -->
+    <path d="M26 0 L52 44 L0 44" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Small accent: rafter beam (A's crossbar) -->
+    <line x1="14" y1="24" x2="38" y2="24" stroke="#0891b2" stroke-width="3" stroke-linecap="round"/>
+    <!-- Foundation line with accent offset -->
+    <line x1="-4" y1="50" x2="56" y2="50" stroke="#0891b2" stroke-width="2"/>
+    <line x1="-8" y1="54" x2="20" y2="54" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+    <line x1="32" y1="54" x2="60" y2="54" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="80" y="42" font-family="system-ui, sans-serif" font-size="26" font-weight="800" letter-spacing="-0.6" fill="currentColor">Archifex</text>
+</svg>

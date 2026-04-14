@@ -27,6 +27,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Logo rating tool: skip i18n (standalone page, not part of main site)
+  if (pathname.startsWith("/logos")) {
+    return NextResponse.next();
+  }
+
   // Public routes: i18n locale detection and routing
   return intlMiddleware(request);
 }
