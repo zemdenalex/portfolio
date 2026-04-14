@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" fill="none">
+  <!-- Drafting compass forming an A: two legs meeting at pivot -->
+  <g stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none">
+    <!-- Left leg -->
+    <line x1="10" y1="56" x2="28" y2="10"/>
+    <!-- Right leg -->
+    <line x1="28" y1="10" x2="46" y2="56"/>
+    <!-- Pivot pin (filled circle at apex) -->
+  </g>
+  <circle cx="28" cy="10" r="3.5" fill="#0891b2"/>
+  <!-- Compass point tips -->
+  <circle cx="10" cy="56" r="2" fill="currentColor"/>
+  <circle cx="46" cy="56" r="2" fill="currentColor"/>
+  <!-- Horizontal arc (compass radius guide) -->
+  <path d="M10 56 Q28 46 46 56" stroke="#0891b2" stroke-width="1" stroke-dasharray="3 2" fill="none"/>
+  <!-- Crossbar tick -->
+  <line x1="20" y1="34" x2="36" y2="34" stroke="#0891b2" stroke-width="2"/>
+  <!-- Wordmark -->
+  <text x="66" y="42" font-family="system-ui, sans-serif" font-size="26" font-weight="700" letter-spacing="0.5" fill="currentColor">Archifex</text>
+</svg>
