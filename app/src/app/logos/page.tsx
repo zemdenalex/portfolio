@@ -363,17 +363,18 @@ export default function LogoRatingPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-text-muted">
-              {ratedCount} / 30 rated
+              {ratedCount}/30
             </span>
             <input
               type="text"
               placeholder="Your name (optional)"
               value={label}
               onChange={(e) => saveLabel(e.target.value)}
-              className="w-32 rounded border border-border bg-bg-secondary px-2 py-1 text-xs text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none"
+              className="w-28 rounded border border-border bg-bg-secondary px-2 py-1 text-xs text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none sm:w-32"
             />
+            <ShareButton />
           </div>
         </div>
       </header>
@@ -618,9 +619,9 @@ function RatingRow({
   compact?: boolean;
 }) {
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${compact ? "px-4 py-2.5" : "px-5 py-4"}`}>
-      {!compact && <span className="mr-1 text-xs font-semibold text-text-muted">Score:</span>}
-      <div className="flex flex-wrap gap-1">
+    <div className={`flex flex-wrap items-center gap-2 ${compact ? "px-3 py-2.5 sm:px-4" : "px-3 py-4 sm:px-5"}`}>
+      {!compact && <span className="mr-1 hidden text-xs font-semibold text-text-muted sm:inline">Score:</span>}
+      <div className="flex w-full gap-0.5 sm:w-auto sm:gap-1">
         {Array.from({ length: 11 }, (_, i) => {
           const selected = rating?.score === i;
           const tone =
@@ -629,8 +630,9 @@ function RatingRow({
             <button
               key={i}
               onClick={() => onRate(logoId, i)}
-              className={`font-mono font-bold transition-all ${
-                compact ? "h-7 w-7 text-[11px]" : "h-9 w-9 text-sm"
+              aria-label={`Rate ${i} out of 10`}
+              className={`flex-1 font-mono font-bold transition-all sm:flex-initial ${
+                compact ? "h-8 text-[11px] sm:h-7 sm:w-7" : "h-10 text-sm sm:h-9 sm:w-9"
               } rounded border ${
                 selected
                   ? tone === "red"
@@ -918,6 +920,42 @@ function ResultsSection({
         </>
       )}
     </section>
+  );
+}
+
+function ShareButton() {
+  const [copied, setCopied] = useState(false);
+  async function share() {
+    const url = typeof window !== "undefined" ? window.location.origin + "/logos" : "";
+    // Prefer native share sheet on mobile
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      try {
+        await navigator.share({
+          title: "Archifex Logo Rating",
+          text: "Help us pick a logo — rate 30 variants",
+          url,
+        });
+        return;
+      } catch {
+        // User cancelled or unsupported — fall through to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // ignore
+    }
+  }
+  return (
+    <button
+      onClick={share}
+      className="rounded border border-border bg-bg-secondary px-2.5 py-1 text-xs font-semibold text-text-secondary hover:border-accent hover:text-text-primary"
+      title="Share this page"
+    >
+      {copied ? "✓ Copied" : "Share"}
+    </button>
   );
 }
 
