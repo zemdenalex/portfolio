@@ -1,6 +1,9 @@
 package quiz
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+)
 
 var (
 	ErrNodeNotFound   = errors.New("quiz node not found")
@@ -19,12 +22,14 @@ type QuizNode struct {
 }
 
 type QuizOption struct {
-	ID         string  `json:"id"`
-	NodeID     string  `json:"node_id"`
-	LabelEn    string  `json:"label_en"`
-	LabelRu    string  `json:"label_ru"`
-	NextNodeID *string `json:"next_node_id"`
-	SortOrder  int     `json:"sort_order"`
+	ID           string          `json:"id"`
+	NodeID       string          `json:"node_id"`
+	LabelEn      string          `json:"label_en"`
+	LabelRu      string          `json:"label_ru"`
+	NextNodeID   *string         `json:"next_node_id"`
+	SortOrder    int             `json:"sort_order"`
+	StyleWeights json.RawMessage `json:"style_weights"`
+	ProjectType  *string         `json:"project_type"`
 }
 
 type QuizResult struct {
@@ -60,18 +65,22 @@ type UpdateNodeRequest struct {
 }
 
 type CreateOptionRequest struct {
-	NodeID     string  `json:"node_id"`
-	LabelEn    string  `json:"label_en"`
-	LabelRu    string  `json:"label_ru"`
-	NextNodeID *string `json:"next_node_id"`
-	SortOrder  int     `json:"sort_order"`
+	NodeID       string          `json:"node_id"`
+	LabelEn      string          `json:"label_en"`
+	LabelRu      string          `json:"label_ru"`
+	NextNodeID   *string         `json:"next_node_id"`
+	SortOrder    int             `json:"sort_order"`
+	StyleWeights json.RawMessage `json:"style_weights"`
+	ProjectType  *string         `json:"project_type"`
 }
 
 type UpdateOptionRequest struct {
-	LabelEn    *string `json:"label_en"`
-	LabelRu    *string `json:"label_ru"`
-	NextNodeID *string `json:"next_node_id"`
-	SortOrder  *int    `json:"sort_order"`
+	LabelEn      *string         `json:"label_en"`
+	LabelRu      *string         `json:"label_ru"`
+	NextNodeID   *string         `json:"next_node_id"`
+	SortOrder    *int            `json:"sort_order"`
+	StyleWeights json.RawMessage `json:"style_weights"`
+	ProjectType  *string         `json:"project_type"`
 }
 
 type ReorderRequest struct {

@@ -79,7 +79,7 @@ func (s *Service) GetFullTree(ctx context.Context) ([]NodeWithOptions, error) {
 
 	// Load all options
 	optRows, err := s.db.Query(ctx,
-		`SELECT id, node_id, label_en, label_ru, next_node_id, sort_order
+		`SELECT id, node_id, label_en, label_ru, next_node_id, sort_order, style_weights, project_type
 		FROM quiz_options ORDER BY sort_order ASC`,
 	)
 	if err != nil {
@@ -179,11 +179,11 @@ func (s *Service) DeleteNode(ctx context.Context, id string) error {
 func (s *Service) CreateOption(ctx context.Context, req *CreateOptionRequest) (*QuizOption, error) {
 	var o QuizOption
 	err := s.db.QueryRow(ctx,
-		`INSERT INTO quiz_options (node_id, label_en, label_ru, next_node_id, sort_order)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, node_id, label_en, label_ru, next_node_id, sort_order`,
-		req.NodeID, req.LabelEn, req.LabelRu, req.NextNodeID, req.SortOrder,
-	).Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder)
+		`INSERT INTO quiz_options (node_id, label_en, label_ru, next_node_id, sort_order, style_weights, project_type)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id, node_id, label_en, label_ru, next_node_id, sort_order, style_weights, project_type`,
+		req.NodeID, req.LabelEn, req.LabelRu, req.NextNodeID, req.SortOrder, req.StyleWeights, req.ProjectType,
+	).Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder, &o.StyleWeights, &o.ProjectType)
 	if err != nil {
 		return nil, fmt.Errorf("create option: %w", err)
 	}
@@ -197,11 +197,13 @@ func (s *Service) UpdateOption(ctx context.Context, id string, req *UpdateOption
 			label_en = COALESCE($1, label_en),
 			label_ru = COALESCE($2, label_ru),
 			next_node_id = COALESCE($3, next_node_id),
-			sort_order = COALESCE($4, sort_order)
-		WHERE id = $5
-		RETURNING id, node_id, label_en, label_ru, next_node_id, sort_order`,
-		req.LabelEn, req.LabelRu, req.NextNodeID, req.SortOrder, id,
-	).Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder)
+			sort_order = COALESCE($4, sort_order),
+			style_weights = COALESCE($5, style_weights),
+			project_type = COALESCE($6, project_type)
+		WHERE id = $7
+		RETURNING id, node_id, label_en, label_ru, next_node_id, sort_order, style_weights, project_type`,
+		req.LabelEn, req.LabelRu, req.NextNodeID, req.SortOrder, req.StyleWeights, req.ProjectType, id,
+	).Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder, &o.StyleWeights, &o.ProjectType)
 	if err != nil {
 		return nil, ErrOptionNotFound
 	}
@@ -261,7 +263,7 @@ func (s *Service) UpdateResult(ctx context.Context, nodeID string, req *UpdateRe
 
 func (s *Service) getOptionsByNodeID(ctx context.Context, nodeID string) ([]QuizOption, error) {
 	rows, err := s.db.Query(ctx,
-		`SELECT id, node_id, label_en, label_ru, next_node_id, sort_order
+		`SELECT id, node_id, label_en, label_ru, next_node_id, sort_order, style_weights, project_type
 		FROM quiz_options WHERE node_id = $1 ORDER BY sort_order ASC`,
 		nodeID,
 	)
@@ -301,7 +303,7 @@ func scanNode(row pgx.CollectableRow) (QuizNode, error) {
 
 func scanOption(row pgx.CollectableRow) (QuizOption, error) {
 	var o QuizOption
-	err := row.Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder)
+	err := row.Scan(&o.ID, &o.NodeID, &o.LabelEn, &o.LabelRu, &o.NextNodeID, &o.SortOrder, &o.StyleWeights, &o.ProjectType)
 	return o, err
 }
 
