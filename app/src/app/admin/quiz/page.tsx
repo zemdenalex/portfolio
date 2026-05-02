@@ -11,6 +11,8 @@ type QuizOptionData = {
   label_ru: string;
   next_node_id: string | null;
   sort_order: number;
+  style_weights: Record<string, number> | null;
+  project_type: string | null;
 };
 
 type QuizResultData = {
