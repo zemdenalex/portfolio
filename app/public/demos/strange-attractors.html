@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strange Attractors</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #05050a;
+    overflow: hidden;
+    height: 100vh;
+    font-family: 'Courier New', monospace;
+    color: rgba(255,255,255,0.5);
+  }
+  canvas { display: block; position: absolute; top: 0; left: 0; }
+  #ui {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+  }
+  button {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.5);
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  button:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+  button.active { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.9); }
+  #name {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    z-index: 10;
+  }
+  #description {
+    position: fixed;
+    top: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 1px;
+    opacity: 0.55;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="name">Lorenz</div>
+<div id="description">Deterministic chaos — every point is exactly determined by the one before it, yet the shape is never the same twice</div>
+<div id="ui">
+  <button class="active" onclick="setAttractor(0)">Lorenz</button>
+  <button onclick="setAttractor(1)">Rössler</button>
+  <button onclick="setAttractor(2)">Aizawa</button>
+  <button onclick="setAttractor(3)">Thomas</button>
+  <button onclick="setAttractor(4)">Halvorsen</button>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const nameEl = document.getElementById('name');
+const descEl = document.getElementById('description');
+
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// --- Attractor definitions ---
+const attractors = [
+  {
+    name: 'Lorenz',
+    description: 'Deterministic chaos — every point is exactly determined by the one before it, yet the shape is never the same twice',
+    fn: (x, y, z) => {
+      const sigma = 10, rho = 28, beta = 8/3;
+      return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z];
+    },
+    dt: 0.003,
+    scale: 8,
+    init: () => [0.1, 0, 0],
+    color: [100, 160, 255],
+  },
+  {
+    name: 'Rössler',
+    description: 'A simpler kind of chaos — one slow spiral, one fast kick. The minimal recipe for unpredictability.',
+    fn: (x, y, z) => {
+      const a = 0.2, b = 0.2, c = 5.7;
+      return [-(y + z), x + a * y, b + z * (x - c)];
+    },
+    dt: 0.004,
+    scale: 15,
+    init: () => [0.1, 0, 0],
+    color: [255, 130, 90],
+  },
+  {
+    name: 'Aizawa',
+    description: 'A mushroom-shaped orbit that breathes. Order and chaos layered on top of each other.',
+    fn: (x, y, z) => {
+      const a = 0.95, b = 0.7, c = 0.6, d = 3.5, e = 0.25, f = 0.1;
+      return [
+        (z - b) * x - d * y,
+        d * x + (z - b) * y,
+        c + a * z - (z * z * z) / 3 - (x * x + y * y) * (1 + e * z) + f * z * x * x * x
+      ];
+    },
+    dt: 0.003,
+    scale: 150,
+    init: () => [0.1, 0, 0],
+    color: [100, 255, 170],
+  },
+  {
+    name: 'Thomas',
+    description: 'A cyclically symmetric attractor. No axis is special. Everything curves toward everything else.',
+    fn: (x, y, z) => {
+      const b = 0.208186;
+      return [
+        Math.sin(y) - b * x,
+        Math.sin(z) - b * y,
+        Math.sin(x) - b * z
+      ];
+    },
+    dt: 0.03,
+    scale: 60,
+    init: () => [1.1, 1.1, -0.01],
+    color: [255, 210, 90],
+  },
+  {
+    name: 'Halvorsen',
+    description: 'Three-fold symmetry spinning through space. The same equation treats x, y, z identically — yet asymmetry emerges.',
+    fn: (x, y, z) => {
+      const a = 1.89;
+      return [
+        -a * x - 4 * y - 4 * z - y * y,
+        -a * y - 4 * z - 4 * x - z * z,
+        -a * z - 4 * x - 4 * y - x * x
+      ];
+    },
+    dt: 0.002,
+    scale: 12,
+    init: () => [-1.48, -1.51, 2.04],
+    color: [200, 140, 255],
+  },
+];
+
+// --- State ---
+let current = 0;
+let points = [];
+const TRAIL_LENGTH = 8000;
+const POINTS_PER_FRAME = 15;
+let rotX = 0.3, rotY = 0;
+let autoRotate = true;
+
+function reset() {
+  const a = attractors[current];
+  const [x, y, z] = a.init();
+  points = [{ x, y, z }];
+}
+
+function setAttractor(idx) {
+  current = idx;
+  const a = attractors[idx];
+  nameEl.textContent = a.name;
+  descEl.textContent = a.description;
+  document.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === idx));
+  ctx.fillStyle = '#05050a';
+  ctx.fillRect(0, 0, W, H);
+  reset();
+}
+
+reset();
+
+// --- 3D projection ---
+function project(x, y, z, scale) {
+  // Rotate around Y
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  let x1 = x * cosY - z * sinY;
+  let z1 = x * sinY + z * cosY;
+  // Rotate around X
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  let y1 = y * cosX - z1 * sinX;
+  let z2 = y * sinX + z1 * cosX;
+  // Simple perspective
+  const perspective = 400 / (400 + z2 * scale * 0.3);
+  return {
+    px: W / 2 + x1 * scale * perspective,
+    py: H / 2 + y1 * scale * perspective,
+    depth: z2,
+    perspective
+  };
+}
+
+function step() {
+  const a = attractors[current];
+  const last = points[points.length - 1];
+  let { x, y, z } = last;
+
+  for (let i = 0; i < POINTS_PER_FRAME; i++) {
+    const [dx, dy, dz] = a.fn(x, y, z);
+    x += dx * a.dt;
+    y += dy * a.dt;
+    z += dz * a.dt;
+    points.push({ x, y, z });
+  }
+
+  if (points.length > TRAIL_LENGTH) {
+    points = points.slice(points.length - TRAIL_LENGTH);
+  }
+}
+
+function draw() {
+  ctx.fillStyle = 'rgba(5, 5, 10, 0.08)';
+  ctx.fillRect(0, 0, W, H);
+
+  const a = attractors[current];
+  const [cr, cg, cb] = a.color;
+
+  if (autoRotate) {
+    rotY += 0.003;
+  }
+
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i];
+    const { px, py, depth, perspective } = project(p.x, p.y, p.z, a.scale);
+
+    const age = i / points.length;
+    const alpha = age * 0.6 * perspective;
+    const size = (0.5 + age * 1.5) * perspective;
+
+    ctx.beginPath();
+    ctx.arc(px, py, Math.max(0.3, size), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+    ctx.fill();
+  }
+
+  // Draw the head brighter
+  if (points.length > 0) {
+    const head = points[points.length - 1];
+    const { px, py, perspective } = project(head.x, head.y, head.z, a.scale);
+    ctx.beginPath();
+    ctx.arc(px, py, 3 * perspective, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,0.8)`;
+    ctx.fill();
+  }
+}
+
+function loop() {
+  step();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// Drag to rotate
+let dragging = false, lastMX, lastMY;
+canvas.addEventListener('mousedown', (e) => { dragging = true; autoRotate = false; lastMX = e.clientX; lastMY = e.clientY; });
+canvas.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  rotY += (e.clientX - lastMX) * 0.005;
+  rotX += (e.clientY - lastMY) * 0.005;
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+});
+canvas.addEventListener('mouseup', () => { dragging = false; });
+canvas.addEventListener('dblclick', () => { autoRotate = true; });
+</script>
+</body>
+</html>

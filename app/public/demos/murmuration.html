@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Murmuration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0c14;
+    overflow: hidden;
+    cursor: crosshair;
+    font-family: 'Courier New', monospace;
+  }
+  canvas { display: block; }
+  #info {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.8s;
+  }
+  #title {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.2);
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  #count {
+    position: fixed;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.12);
+    font-size: 11px;
+    letter-spacing: 2px;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="title">murmuration</div>
+<div id="count"></div>
+<div id="info">move mouse to guide · click to scatter · 1-4 modes · +/- flock size · space to reset</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const info = document.getElementById('info');
+const countEl = document.getElementById('count');
+
+let W, H;
+let mouse = { x: -1000, y: -1000, active: false };
+let scatter = false;
+let scatterTimer = 0;
+
+const modes = {
+  1: { name: 'starlings', count: 2000, size: 2.5, trail: 0.08, speed: 3.5, cohesion: 0.003, alignment: 0.06, separation: 25, perception: 80, color: (b) => `rgba(${180 + b.phase * 40}, ${190 + b.phase * 30}, ${210 + b.phase * 20}, ${0.7 + b.speed * 0.05})` },
+  2: { name: 'fish', count: 800, size: 3.5, trail: 0.06, speed: 2.5, cohesion: 0.005, alignment: 0.08, separation: 20, perception: 60, color: (b) => `rgba(${60 + b.phase * 30}, ${160 + b.phase * 60}, ${200 + b.phase * 40}, ${0.6 + b.speed * 0.08})` },
+  3: { name: 'fireflies', count: 500, size: 3, trail: 0.03, speed: 1.5, cohesion: 0.001, alignment: 0.02, separation: 30, perception: 120, color: (b) => { const pulse = Math.sin(b.phase * 6.28 + performance.now() * 0.003) * 0.5 + 0.5; return `rgba(${200 + pulse * 55}, ${180 + pulse * 75}, ${40}, ${0.3 + pulse * 0.7})`; } },
+  4: { name: 'swarm', count: 3000, size: 1.5, trail: 0.12, speed: 4.5, cohesion: 0.004, alignment: 0.05, separation: 15, perception: 50, color: (b) => `rgba(${255}, ${255}, ${255}, ${0.3 + b.speed * 0.06})` },
+};
+
+let currentMode = 1;
+let boids = [];
+
+class Boid {
+  constructor() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    const angle = Math.random() * Math.PI * 2;
+    const m = modes[currentMode];
+    const spd = m.speed * (0.7 + Math.random() * 0.6);
+    this.vx = Math.cos(angle) * spd;
+    this.vy = Math.sin(angle) * spd;
+    this.phase = Math.random();
+    this.speed = spd;
+  }
+}
+
+// Spatial hash for O(n) neighbor lookups
+class SpatialHash {
+  constructor(cellSize) {
+    this.cellSize = cellSize;
+    this.cells = new Map();
+  }
+
+  clear() {
+    this.cells.clear();
+  }
+
+  key(x, y) {
+    return `${Math.floor(x / this.cellSize)},${Math.floor(y / this.cellSize)}`;
+  }
+
+  insert(boid) {
+    const k = this.key(boid.x, boid.y);
+    if (!this.cells.has(k)) this.cells.set(k, []);
+    this.cells.get(k).push(boid);
+  }
+
+  query(x, y, radius) {
+    const results = [];
+    const minCx = Math.floor((x - radius) / this.cellSize);
+    const maxCx = Math.floor((x + radius) / this.cellSize);
+    const minCy = Math.floor((y - radius) / this.cellSize);
+    const maxCy = Math.floor((y + radius) / this.cellSize);
+
+    for (let cx = minCx; cx <= maxCx; cx++) {
+      for (let cy = minCy; cy <= maxCy; cy++) {
+        const cell = this.cells.get(`${cx},${cy}`);
+        if (cell) {
+          for (const b of cell) {
+            results.push(b);
+          }
+        }
+      }
+    }
+    return results;
+  }
+}
+
+const grid = new SpatialHash(100);
+
+function init() {
+  const m = modes[currentMode];
+  boids = [];
+  for (let i = 0; i < m.count; i++) {
+    boids.push(new Boid());
+  }
+  updateCount();
+}
+
+function updateCount() {
+  countEl.textContent = `${boids.length} ${modes[currentMode].name}`;
+}
+
+function resize() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W;
+  canvas.height = H;
+  // Fill with background on resize
+  ctx.fillStyle = '#0a0c14';
+  ctx.fillRect(0, 0, W, H);
+}
+
+function update() {
+  const m = modes[currentMode];
+  const maxSpeed = m.speed * 1.8;
+
+  // Rebuild spatial hash
+  grid.clear();
+  for (const b of boids) {
+    grid.insert(b);
+  }
+
+  for (const b of boids) {
+    const neighbors = grid.query(b.x, b.y, m.perception);
+
+    // Reynolds' three rules
+    let cohX = 0, cohY = 0, cohCount = 0;
+    let aliX = 0, aliY = 0, aliCount = 0;
+    let sepX = 0, sepY = 0;
+
+    for (const other of neighbors) {
+      if (other === b) continue;
+      const dx = other.x - b.x;
+      const dy = other.y - b.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < m.perception && dist > 0) {
+        // Cohesion — steer toward average position
+        cohX += other.x;
+        cohY += other.y;
+        cohCount++;
+
+        // Alignment — match velocity
+        aliX += other.vx;
+        aliY += other.vy;
+        aliCount++;
+
+        // Separation — avoid crowding
+        if (dist < m.separation) {
+          const force = 1 - dist / m.separation;
+          sepX -= (dx / dist) * force;
+          sepY -= (dy / dist) * force;
+        }
+      }
+    }
+
+    if (cohCount > 0) {
+      b.vx += (cohX / cohCount - b.x) * m.cohesion;
+      b.vy += (cohY / cohCount - b.y) * m.cohesion;
+    }
+
+    if (aliCount > 0) {
+      b.vx += (aliX / aliCount - b.vx) * m.alignment;
+      b.vy += (aliY / aliCount - b.vy) * m.alignment;
+    }
+
+    b.vx += sepX * 0.8;
+    b.vy += sepY * 0.8;
+
+    // Mouse interaction
+    if (mouse.active) {
+      const dx = mouse.x - b.x;
+      const dy = mouse.y - b.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 250 && dist > 0) {
+        if (scatter) {
+          // Flee from mouse
+          b.vx -= (dx / dist) * 2;
+          b.vy -= (dy / dist) * 2;
+        } else {
+          // Gently attracted to mouse
+          b.vx += (dx / dist) * 0.3;
+          b.vy += (dy / dist) * 0.3;
+        }
+      }
+    }
+
+    // Soft boundary wrapping with steering
+    const margin = 80;
+    if (b.x < margin) b.vx += (margin - b.x) * 0.01;
+    if (b.x > W - margin) b.vx -= (b.x - (W - margin)) * 0.01;
+    if (b.y < margin) b.vy += (margin - b.y) * 0.01;
+    if (b.y > H - margin) b.vy -= (b.y - (H - margin)) * 0.01;
+
+    // Hard wrap
+    if (b.x < -20) b.x = W + 20;
+    if (b.x > W + 20) b.x = -20;
+    if (b.y < -20) b.y = H + 20;
+    if (b.y > H + 20) b.y = -20;
+
+    // Speed limit
+    const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    if (speed > maxSpeed) {
+      b.vx = (b.vx / speed) * maxSpeed;
+      b.vy = (b.vy / speed) * maxSpeed;
+    }
+    // Minimum speed
+    if (speed < m.speed * 0.5) {
+      b.vx = (b.vx / (speed || 1)) * m.speed * 0.5;
+      b.vy = (b.vy / (speed || 1)) * m.speed * 0.5;
+    }
+
+    b.speed = speed;
+    b.x += b.vx;
+    b.y += b.vy;
+  }
+
+  // Decay scatter
+  if (scatter) {
+    scatterTimer--;
+    if (scatterTimer <= 0) scatter = false;
+  }
+}
+
+function render() {
+  const m = modes[currentMode];
+
+  // Trail fade
+  ctx.fillStyle = `rgba(10, 12, 20, ${m.trail})`;
+  ctx.fillRect(0, 0, W, H);
+
+  for (const b of boids) {
+    const angle = Math.atan2(b.vy, b.vx);
+    const s = m.size;
+
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(angle);
+
+    ctx.fillStyle = m.color(b);
+
+    // Draw as a small elongated triangle — like a bird
+    ctx.beginPath();
+    ctx.moveTo(s * 2, 0);
+    ctx.lineTo(-s, -s * 0.7);
+    ctx.lineTo(-s * 0.3, 0);
+    ctx.lineTo(-s, s * 0.7);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+}
+
+function loop() {
+  update();
+  render();
+  requestAnimationFrame(loop);
+}
+
+// Events
+canvas.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  mouse.active = true;
+});
+
+canvas.addEventListener('mouseleave', () => {
+  mouse.active = false;
+});
+
+canvas.addEventListener('mousedown', () => {
+  scatter = true;
+  scatterTimer = 40;
+});
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  mouse.x = e.touches[0].clientX;
+  mouse.y = e.touches[0].clientY;
+  mouse.active = true;
+  scatter = true;
+  scatterTimer = 40;
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  mouse.x = e.touches[0].clientX;
+  mouse.y = e.touches[0].clientY;
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+  mouse.active = false;
+});
+
+let firstInteract = true;
+canvas.addEventListener('mousemove', () => {
+  if (firstInteract) {
+    firstInteract = false;
+    setTimeout(() => { info.style.opacity = '0'; }, 4000);
+  }
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key >= '1' && e.key <= '4') {
+    currentMode = parseInt(e.key);
+    init();
+  } else if (e.key === ' ') {
+    e.preventDefault();
+    init();
+  } else if (e.key === '+' || e.key === '=') {
+    const m = modes[currentMode];
+    const add = Math.max(50, Math.floor(boids.length * 0.2));
+    for (let i = 0; i < add; i++) boids.push(new Boid());
+    updateCount();
+  } else if (e.key === '-' || e.key === '_') {
+    const remove = Math.max(50, Math.floor(boids.length * 0.2));
+    boids.splice(0, Math.min(remove, boids.length - 10));
+    updateCount();
+  }
+});
+
+window.addEventListener('resize', resize);
+resize();
+init();
+loop();
+</script>
+</body>
+</html>
