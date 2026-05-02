@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://archifex.space";
+
 export const metadata: Metadata = {
   title: {
     default: "Archifex — Web Architecture Studio",
@@ -20,9 +22,22 @@ export const metadata: Metadata = {
   },
   description:
     "We design and build modern websites, applications, and Telegram bots. From blueprint to production.",
-  metadataBase: new URL(
-    process.env.NEXTAUTH_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(SITE_URL),
+  openGraph: {
+    type: "website",
+    siteName: "Archifex",
+    title: "Archifex — Web Architecture Studio",
+    description:
+      "We design and build modern websites, applications, and Telegram bots. From blueprint to production.",
+    url: SITE_URL,
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "Archifex" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Archifex — Web Architecture Studio",
+    description: "We design and build modern websites, applications, and Telegram bots.",
+    images: ["/og-default.png"],
+  },
 };
 
 export default function RootLayout({

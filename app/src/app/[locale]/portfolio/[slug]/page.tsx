@@ -27,7 +27,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const project = await serverApi<PortfolioProject>(`/api/public/portfolio/${slug}`);
     const title = getLocalizedField(project, "title", locale);
     const description = getLocalizedField(project, "description", locale);
-    return { title, description };
+    const image = project.thumbnail_url
+      ? [{ url: project.thumbnail_url, width: 1200, height: 630, alt: title }]
+      : [{ url: "/og-default.png", width: 1200, height: 630, alt: title }];
+
+    return {
+      title,
+      description,
+      openGraph: {
+        type: "article",
+        title,
+        description,
+        images: image,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: image.map((i) => i.url),
+      },
+    };
   } catch {
     return { title: "Not Found" };
   }
