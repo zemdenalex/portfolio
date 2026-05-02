@@ -226,3 +226,25 @@ func (h *Handler) UpdateResult(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusOK, result)
 }
+
+type ComputeResultRequest struct {
+	OptionIDs []string `json:"option_ids"`
+}
+
+func (h *Handler) ComputeResult(w http.ResponseWriter, r *http.Request) {
+	var req ComputeResultRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.BadRequest(w, "invalid request body")
+		return
+	}
+	if len(req.OptionIDs) == 0 {
+		response.ValidationError(w, "option_ids is required")
+		return
+	}
+	result, err := h.service.ComputeResult(r.Context(), req.OptionIDs)
+	if err != nil {
+		response.ValidationError(w, err.Error())
+		return
+	}
+	response.JSON(w, http.StatusOK, result)
+}

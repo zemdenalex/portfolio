@@ -128,6 +128,7 @@ func main() {
 			// Quiz
 			r.Get("/quiz/root", quizHandler.GetRoot)
 			r.Get("/quiz/node/{id}", quizHandler.GetNode)
+			r.Post("/quiz/result", quizHandler.ComputeResult)
 
 			// Leads (submit only)
 			r.Post("/leads", leadsHandler.Submit)
