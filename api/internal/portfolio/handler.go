@@ -40,6 +40,16 @@ func (h *Handler) ListPublic(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, projects)
 }
 
+// ListSlugs returns a minimal list of {slug, updated_at} for sitemap generation.
+func (h *Handler) ListSlugs(w http.ResponseWriter, r *http.Request) {
+	slugs, err := h.service.ListSlugs(r.Context())
+	if err != nil {
+		response.InternalError(w, "failed to list slugs")
+		return
+	}
+	response.JSON(w, http.StatusOK, slugs)
+}
+
 func (h *Handler) GetPublic(w http.ResponseWriter, r *http.Request) {
 	slug := chi.URLParam(r, "slug")
 	if slug == "" {

@@ -399,6 +399,34 @@ func (s *Service) getBlocksByProjectID(ctx context.Context, projectID string) ([
 	return blocks, nil
 }
 
+type ProjectSlug struct {
+	Slug      string `json:"slug"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+func (s *Service) ListSlugs(ctx context.Context) ([]ProjectSlug, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT slug, updated_at FROM portfolio_projects WHERE status = 'PUBLISHED' ORDER BY sort_order`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list slugs: %w", err)
+	}
+	defer rows.Close()
+
+	var slugs []ProjectSlug
+	for rows.Next() {
+		var ps ProjectSlug
+		if err := rows.Scan(&ps.Slug, &ps.UpdatedAt); err != nil {
+			return nil, fmt.Errorf("scan slug: %w", err)
+		}
+		slugs = append(slugs, ps)
+	}
+	if slugs == nil {
+		slugs = []ProjectSlug{}
+	}
+	return slugs, rows.Err()
+}
+
 func scanProject(row pgx.CollectableRow) (Project, error) {
 	var p Project
 	err := row.Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,

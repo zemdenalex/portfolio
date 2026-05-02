@@ -123,6 +123,7 @@ func main() {
 		r.Route("/public", func(r chi.Router) {
 			// Portfolio
 			r.Get("/portfolio", portfolioHandler.ListPublic)
+			r.Get("/portfolio/slugs", portfolioHandler.ListSlugs)
 			r.Get("/portfolio/{slug}", portfolioHandler.GetPublic)
 
 			// Quiz
