@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Creative Studio</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #f0f0f0;
+    --accent: #ff3b3b;
+    --muted: #444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Nav */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 40px;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+  .logo { font-size: 22px; letter-spacing: 6px; color: #fff; }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: #fff; text-decoration: none; font-size: 12px; letter-spacing: 3px; font-family: Arial, sans-serif; font-weight: 700; text-transform: uppercase; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
+  }
+
+  .counter {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    font-size: clamp(120px, 20vw, 280px);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.08);
+    line-height: 1;
+    user-select: none;
+    letter-spacing: -10px;
+  }
+
+  .hero-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+
+  h1 {
+    font-size: clamp(48px, 9vw, 130px);
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    mix-blend-mode: normal;
+  }
+
+  h1 .line-accent { color: var(--accent); }
+
+  .hero-cta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-top: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 18px 40px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .btn-primary:hover { transform: scale(1.04); background: #e02020; }
+
+  .scroll-hint {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Work section */
+  .work {
+    padding: 120px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .work-item {
+    aspect-ratio: 4/3;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--muted);
+  }
+
+  .work-item:nth-child(1) { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  .work-item:nth-child(2) { background: linear-gradient(135deg, #1a0a00, #3d1a00); aspect-ratio: 4/5; }
+  .work-item:nth-child(3) { background: linear-gradient(135deg, #0a1a00, #1a3d00); grid-column: 1/-1; aspect-ratio: 16/5; }
+
+  .work-item-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .work-item:hover .work-item-inner { transform: translateY(0); opacity: 1; }
+
+  .work-num {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-family: Arial, sans-serif;
+    margin-bottom: 8px;
+  }
+  .work-title {
+    font-size: 28px;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .stat {
+    padding: 48px 40px;
+    border-right: 1px solid #1a1a1a;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-size: 56px;
+    letter-spacing: -3px;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* Marquee */
+  .marquee-wrap { overflow: hidden; padding: 32px 0; border-top: 1px solid #1a1a1a; }
+  .marquee {
+    display: flex;
+    gap: 64px;
+    white-space: nowrap;
+    animation: marquee 12s linear infinite;
+    font-size: clamp(36px, 5vw, 72px);
+    letter-spacing: -2px;
+    text-transform: uppercase;
+  }
+  @keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+  .marquee-accent { color: var(--accent); }
+
+  /* Footer */
+  footer {
+    padding: 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #1a1a1a;
+  }
+  footer p { font-family: Arial, sans-serif; font-size: 11px; letter-spacing: 2px; color: var(--muted); }
+
+  /* Cursor dot */
+  .cursor {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav>
+  <div class="logo">NEXUS</div>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="counter" id="counter">00</div>
+  <p class="hero-label">Creative Studio — Est. 2019</p>
+  <h1>
+    We Build<br>
+    <span class="line-accent">Bold</span><br>
+    Digital
+  </h1>
+  <div class="hero-cta">
+    <button class="btn-primary">Start a Project</button>
+    <span class="scroll-hint">↓ Scroll</span>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>Branding</span>
+    <span class="marquee-accent">✦</span>
+    <span>Web Design</span>
+    <span class="marquee-accent">✦</span>
+    <span>Motion</span>
+    <span class="marquee-accent">✦</span>
+    <span>Strategy</span>
+    <span class="marquee-accent">✦</span>
+    <span>Branding</span>
+    <span class="marquee-accent">✦</span>
+    <span>Web Design</span>
+    <span class="marquee-accent">✦</span>
+    <span>Motion</span>
+    <span class="marquee-accent">✦</span>
+    <span>Strategy</span>
+    <span class="marquee-accent">✦</span>
+  </div>
+</div>
+
+<section class="work" id="work">
+  <div class="work-item">
+    <div class="work-item-inner">
+      <span class="work-num">01</span>
+      <h3 class="work-title">Apex Ventures</h3>
+    </div>
+  </div>
+  <div class="work-item">
+    <div class="work-item-inner">
+      <span class="work-num">02</span>
+      <h3 class="work-title">Noir Fragrance</h3>
+    </div>
+  </div>
+  <div class="work-item">
+    <div class="work-item-inner">
+      <span class="work-num">03</span>
+      <h3 class="work-title">Pulse — Digital Platform</h3>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat-num" data-count="143">0</span>
+    <span class="stat-label">Projects Delivered</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-count="12">0</span>
+    <span class="stat-label">Years Active</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-count="98">0</span>
+    <span class="stat-label">Happy Clients</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" data-count="24">0</span>
+    <span class="stat-label">Awards Won</span>
+  </div>
+</div>
+
+<footer>
+  <p>NEXUS STUDIO © 2025</p>
+  <p>MOSCOW — BERLIN — DUBAI</p>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// Counter animation on hero
+let n = 0;
+const counterEl = document.getElementById('counter');
+setInterval(() => {
+  n = (n + 1) % 100;
+  counterEl.textContent = String(n).padStart(2, '0');
+}, 80);
+
+// Stats count-up
+const stats = document.querySelectorAll('[data-count]');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const target = parseInt(e.target.dataset.count);
+    let cur = 0;
+    const step = target / 40;
+    const t = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      e.target.textContent = Math.round(cur);
+      if (cur >= target) clearInterval(t);
+    }, 30);
+    io.unobserve(e.target);
+  });
+});
+stats.forEach(s => io.observe(s));
+
+// Anchor fix for iframe
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const id = a.getAttribute('href').slice(1);
+    const t = document.getElementById(id);
+    if (t) t.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
