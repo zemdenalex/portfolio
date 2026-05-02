@@ -13,7 +13,7 @@ import {
   Clock,
   DollarSign,
 } from "lucide-react";
-import { BrowserPreview } from "@/components/ui/browser-preview";
+import { DemoFrame } from "@/components/portfolio/demo-frame";
 
 type StyleData = {
   id: string;
@@ -90,12 +90,7 @@ export function QuizResult({ style, pkg, locale }: QuizResultProps) {
               const refLabel = locale === "ru" ? ref.label_ru : ref.label_en;
               return (
                 <div key={ref.id}>
-                  <BrowserPreview
-                    url={ref.url}
-                    label={refLabel}
-                    screenshotUrl={ref.screenshot_url}
-                    embeddable={ref.embeddable}
-                  />
+                  <DemoFrame src={ref.url} title={refLabel} />
                   <p className="mt-2 text-sm font-medium text-text-secondary">
                     {refLabel}
                   </p>
