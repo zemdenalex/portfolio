@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "portfolio": "Portfolio",
-    "quiz": "Style Quiz",
+    "quiz": "Style finder",
     "contact": "Contact"
   },
   "hero": {
@@ -10,7 +10,7 @@
     "title": "We design & build",
     "titleAccent": "digital experiences",
     "subtitle": "Websites, applications, Telegram bots — from initial blueprint to production deployment. Clean code, thoughtful design, on-time delivery.",
-    "ctaPrimary": "Take the Style Quiz",
+    "ctaPrimary": "Find your style",
     "ctaSecondary": "View Portfolio"
   },
   "portfolio": {
@@ -58,15 +58,15 @@
       "features": "What's Included",
       "examples": "Style Examples",
       "cta": "Our team will contact you within 24 hours",
-      "startNew": "Take Quiz Again",
-      "noResults": "No quiz results found. Please take the quiz first.",
-      "dataNotFound": "Result data not found. Please try the quiz again."
+      "startNew": "Find your style again",
+      "noResults": "No results found. Please complete the style finder first.",
+      "dataNotFound": "Result data not found. Please try the style finder again."
     }
   },
   "cta": {
     "title": "Not sure what you need?",
-    "subtitle": "Take our style quiz to discover the perfect approach for your project",
-    "button": "Start the Quiz"
+    "subtitle": "Use our style finder to discover the perfect approach for your project",
+    "button": "Find your style"
   },
   "footer": {
     "copyright": "© {year} Archifex. All rights reserved.",
