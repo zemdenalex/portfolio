@@ -40,8 +40,8 @@ export function QuizResult({ result, locale }: QuizResultProps) {
       method: "POST",
       body: JSON.stringify({
         ...data,
-        style_id: style.id,
-        package_id: pkg?.id ?? null,
+        result_style_id: style.id,
+        result_package_id: pkg?.id ?? null,
       }),
     });
   }
@@ -75,12 +75,25 @@ export function QuizResult({ result, locale }: QuizResultProps) {
             <div className="space-y-6">
               {references.map((ref) => {
                 const refLabel = locale === "ru" ? ref.label_ru : ref.label_en;
+                const isOwn = ref.type === "OWN_PROJECT" || ref.url.includes("archifex.space");
                 return (
                   <div key={ref.id}>
-                    <DemoFrame src={ref.url} title={refLabel} />
-                    <p className="mt-2 text-sm font-medium text-text-secondary">
-                      {refLabel}
-                    </p>
+                    {isOwn ? (
+                      <>
+                        <DemoFrame src={ref.url} title={refLabel} />
+                        <p className="mt-2 text-sm font-medium text-text-secondary">{refLabel}</p>
+                      </>
+                    ) : (
+                      <a
+                        href={ref.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between rounded-lg border border-border bg-bg-secondary px-6 py-4 transition-colors hover:border-accent hover:bg-bg-tertiary"
+                      >
+                        <span className="font-medium text-text-primary">{refLabel}</span>
+                        <span className="text-xs text-text-secondary">↗ {new URL(ref.url).hostname}</span>
+                      </a>
+                    )}
                   </div>
                 );
               })}

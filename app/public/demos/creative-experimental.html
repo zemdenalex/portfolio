@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generative — Creative Experimental</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; overflow: hidden; cursor: none; }
+  canvas { display: block; }
+  #ui {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 40px;
+    font: 11px/1 'SF Mono', 'Consolas', monospace;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+  }
+  #ui span { color: rgba(255,255,255,0.7); }
+  #cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="cursor"></div>
+<div id="ui">move to paint &nbsp;·&nbsp; click to burst &nbsp;·&nbsp; <span>scroll</span> particle size &nbsp;·&nbsp; <span>space</span> clear</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const cursor = document.getElementById('cursor');
+
+let W, H, mouse = {x: -999, y: -999}, particles = [], frame = 0;
+let particleSize = 2.5, hue = 0, lastMouse = {x: 0, y: 0};
+let attractors = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Attractor points (gravity wells)
+function resetAttractors() {
+  attractors = Array.from({length: 5}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    strength: (Math.random() - 0.3) * 80,
+    drift: Math.random() * Math.PI * 2,
+    speed: 0.003 + Math.random() * 0.004
+  }));
+}
+resetAttractors();
+
+class Particle {
+  constructor(x, y, burst) {
+    this.x = x;
+    this.y = y;
+    const a = Math.random() * Math.PI * 2;
+    const spd = burst ? 4 + Math.random() * 8 : 0.5 + Math.random() * 1.5;
+    this.vx = Math.cos(a) * spd;
+    this.vy = Math.sin(a) * spd;
+    this.hue = hue + (Math.random() - 0.5) * 40;
+    this.sat = 70 + Math.random() * 30;
+    this.life = 1;
+    this.decay = burst ? 0.012 + Math.random() * 0.015 : 0.003 + Math.random() * 0.006;
+    this.size = particleSize * (0.5 + Math.random());
+    this.burst = burst;
+  }
+
+  update() {
+    // Gravity from attractors
+    if (!this.burst) {
+      for (const a of attractors) {
+        const dx = a.x - this.x;
+        const dy = a.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) + 60;
+        const force = a.strength / (dist * dist) * 15;
+        this.vx += (dx / dist) * force;
+        this.vy += (dy / dist) * force;
+      }
+    }
+
+    // Mouse repulsion
+    const mdx = this.x - mouse.x;
+    const mdy = this.y - mouse.y;
+    const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+    if (mdist < 80) {
+      const push = (80 - mdist) / 80 * 3;
+      this.vx += (mdx / mdist) * push;
+      this.vy += (mdy / mdist) * push;
+    }
+
+    this.vx *= 0.985;
+    this.vy *= 0.985;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= this.decay;
+  }
+
+  draw() {
+    const alpha = Math.pow(this.life, 2);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, ${this.sat}%, 70%, ${alpha * 0.85})`;
+    ctx.fill();
+  }
+}
+
+function spawnTrail() {
+  const dx = mouse.x - lastMouse.x;
+  const dy = mouse.y - lastMouse.y;
+  const speed = Math.sqrt(dx*dx + dy*dy);
+  if (speed > 2 && particles.length < 3000) {
+    const count = Math.min(Math.floor(speed / 4), 6);
+    for (let i = 0; i < count; i++) {
+      particles.push(new Particle(
+        mouse.x + (Math.random() - 0.5) * 8,
+        mouse.y + (Math.random() - 0.5) * 8,
+        false
+      ));
+    }
+  }
+  lastMouse = {...mouse};
+}
+
+function burst(x, y) {
+  for (let i = 0; i < 80; i++) {
+    particles.push(new Particle(x, y, true));
+  }
+}
+
+// Draw background with subtle fade (trails effect)
+function drawBg() {
+  ctx.fillStyle = 'rgba(0,0,0,0.06)';
+  ctx.fillRect(0, 0, W, H);
+}
+
+// Drift attractors
+function updateAttractors() {
+  for (const a of attractors) {
+    a.drift += a.speed;
+    a.x += Math.sin(a.drift * 0.7) * 0.8;
+    a.y += Math.cos(a.drift * 0.5) * 0.8;
+    a.x = Math.max(0, Math.min(W, a.x));
+    a.y = Math.max(0, Math.min(H, a.y));
+  }
+}
+
+// Optional: draw subtle attractor glow
+function drawAttractors() {
+  for (const a of attractors) {
+    if (a.strength < 0) continue;
+    const grd = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, 60);
+    grd.addColorStop(0, `hsla(${hue + 30}, 60%, 50%, 0.04)`);
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, 60, 0, Math.PI * 2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+  }
+}
+
+let autoActive = true;
+// Autonomous particle spawning when mouse is idle
+let idleTimer = 0;
+
+function loop() {
+  requestAnimationFrame(loop);
+  frame++;
+  hue = (hue + 0.5) % 360;
+
+  drawBg();
+  updateAttractors();
+  drawAttractors();
+  spawnTrail();
+
+  // Auto-spawn ambient particles
+  idleTimer++;
+  if (idleTimer > 20 && particles.length < 800) {
+    const cx = W * 0.3 + Math.sin(frame * 0.011) * W * 0.2;
+    const cy = H * 0.5 + Math.cos(frame * 0.009) * H * 0.3;
+    for (let i = 0; i < 3; i++) {
+      particles.push(new Particle(cx + (Math.random()-0.5)*40, cy + (Math.random()-0.5)*40, false));
+    }
+  }
+
+  // Update & draw particles
+  particles = particles.filter(p => {
+    p.update();
+    if (p.life > 0) { p.draw(); return true; }
+    return false;
+  });
+
+  // FPS indicator (subtle)
+  if (frame % 180 === 0) idleTimer = Math.min(idleTimer, 30);
+}
+
+// Events
+document.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  idleTimer = 0;
+});
+
+document.addEventListener('click', e => {
+  burst(e.clientX, e.clientY);
+});
+
+document.addEventListener('wheel', e => {
+  particleSize = Math.max(1, Math.min(8, particleSize - e.deltaY * 0.005));
+});
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    particles = [];
+    ctx.clearRect(0, 0, W, H);
+    resetAttractors();
+  }
+});
+
+// Touch support
+document.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  mouse.x = t.clientX;
+  mouse.y = t.clientY;
+  idleTimer = 0;
+}, { passive: false });
+
+document.addEventListener('touchstart', e => {
+  const t = e.touches[0];
+  burst(t.clientX, t.clientY);
+});
+
+loop();
+</script>
+</body>
+</html>
