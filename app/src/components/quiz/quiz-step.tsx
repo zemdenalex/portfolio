@@ -47,18 +47,18 @@ export function QuizStep({
               <button
                 type="button"
                 onClick={() => onSelect(option.id)}
-                className="w-full text-left"
+                className="w-full text-left h-full"
               >
                 <Card
                   className={cn(
-                    "cursor-pointer transition-all duration-150",
+                    "cursor-pointer transition-all duration-150 h-full min-h-[80px]",
                     "hover:border-accent hover:shadow-md",
                     isSelected
                       ? "border-accent bg-accent-muted shadow-md"
                       : "border-border",
                   )}
                 >
-                  <CardContent className="p-5">
+                  <CardContent className="p-5 flex flex-col justify-end h-full">
                     <p
                       className={cn(
                         "font-medium",
