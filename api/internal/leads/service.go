@@ -132,3 +132,65 @@ func (s *Service) Stats(ctx context.Context) (*Stats, error) {
 
 	return &stats, nil
 }
+
+// TrackerExport returns leads formatted for import into the Freelance Tracker app.
+func (s *Service) TrackerExport(ctx context.Context) (*TrackerExportResponse, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT l.id, l.name, l.email, l.phone, l.message, l.status, l.created_at,
+		       qs.slug, sp.slug
+		FROM leads l
+		LEFT JOIN quiz_styles qs ON l.result_style_id = qs.id
+		LEFT JOIN service_packages sp ON l.result_package_id = sp.id
+		ORDER BY l.created_at DESC
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("query leads: %w", err)
+	}
+	defer rows.Close()
+
+	var leads []TrackerExportLead
+	for rows.Next() {
+		var (
+			id, name, email, status string
+			phone, message, styleSlug, pkgSlug *string
+			createdAt               interface{}
+		)
+		if err := rows.Scan(&id, &name, &email, &phone, &message, &status, &createdAt, &styleSlug, &pkgSlug); err != nil {
+			return nil, fmt.Errorf("scan lead: %w", err)
+		}
+
+		projectName := "Portfolio lead — " + name
+		if styleSlug != nil {
+			projectName = "Portfolio lead — " + name + " (" + *styleSlug + ")"
+		}
+
+		leads = append(leads, TrackerExportLead{
+			ID:          id,
+			SubmittedAt: fmt.Sprintf("%v", createdAt),
+			Status:      status,
+			Client: TrackerClient{
+				Name:  name,
+				Email: email,
+				Phone: phone,
+				Notes: message,
+			},
+			Project: TrackerProject{
+				Name:    projectName,
+				Style:   styleSlug,
+				Package: pkgSlug,
+			},
+		})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	if leads == nil {
+		leads = []TrackerExportLead{}
+	}
+
+	return &TrackerExportResponse{
+		Leads:      leads,
+		ExportedAt: fmt.Sprintf("%v", ctx.Value("request_time")),
+	}, nil
+}

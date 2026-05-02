@@ -73,3 +73,31 @@ type Stats struct {
 	Total    int `json:"total"`
 	NewCount int `json:"new_count"`
 }
+
+// TrackerExportLead is the shape the Freelance Tracker app expects when importing portfolio leads.
+type TrackerExportLead struct {
+	ID          string `json:"id"`
+	SubmittedAt string `json:"submitted_at"`
+	Status      string `json:"status"`
+	Client      TrackerClient  `json:"client"`
+	Project     TrackerProject `json:"project"`
+}
+
+type TrackerClient struct {
+	Name  string  `json:"name"`
+	Email string  `json:"email"`
+	Phone *string `json:"phone"`
+	Notes *string `json:"notes"`
+}
+
+type TrackerProject struct {
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+	Style       *string `json:"style"`
+	Package     *string `json:"package"`
+}
+
+type TrackerExportResponse struct {
+	Leads      []TrackerExportLead `json:"leads"`
+	ExportedAt string              `json:"exported_at"`
+}

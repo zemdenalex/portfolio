@@ -214,6 +214,7 @@ func main() {
 				// Leads
 				r.Get("/leads", leadsHandler.List)
 				r.Get("/leads/stats", leadsHandler.Stats)
+				r.Get("/leads/tracker-export", leadsHandler.TrackerExport)
 				r.Put("/leads/{id}/status", leadsHandler.UpdateStatus)
 				r.Delete("/leads/{id}", leadsHandler.Delete)
 			})

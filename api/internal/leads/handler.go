@@ -113,3 +113,12 @@ func (h *Handler) Stats(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusOK, stats)
 }
+
+func (h *Handler) TrackerExport(w http.ResponseWriter, r *http.Request) {
+	export, err := h.service.TrackerExport(r.Context())
+	if err != nil {
+		response.InternalError(w, "failed to export leads")
+		return
+	}
+	response.JSON(w, http.StatusOK, export)
+}
