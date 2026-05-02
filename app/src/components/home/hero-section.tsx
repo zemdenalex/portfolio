@@ -151,7 +151,7 @@ export function HeroSection() {
     <section
       className={cn(
         "relative min-h-[calc(100vh-4rem)] flex items-center",
-        "blueprint-grid overflow-hidden",
+        "blueprint-grid overflow-hidden bg-bg-secondary",
       )}
       aria-label="Hero"
     >
