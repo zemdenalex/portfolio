@@ -10,167 +10,127 @@ import {
   CheckCircle,
   RefreshCw,
   Package,
-  Clock,
   DollarSign,
 } from "lucide-react";
-import { BrowserPreview } from "@/components/ui/browser-preview";
-
-type StyleData = {
-  id: string;
-  name_en: string;
-  name_ru: string;
-  description_en: string;
-  description_ru: string;
-  references: {
-    id: string;
-    url: string;
-    label_en: string;
-    label_ru: string;
-    type: string;
-    screenshot_url: string | null;
-    embeddable: boolean;
-  }[];
-};
-
-type PackageData = {
-  id: string;
-  name_en: string;
-  name_ru: string;
-  description_en: string;
-  description_ru: string;
-  price_from: number;
-  price_to: number;
-  currency: string;
-  features_en: string[];
-  features_ru: string[];
-  delivery_days: number | null;
-};
+import { DemoFrame } from "@/components/portfolio/demo-frame";
+import { ContactForm } from "./contact-form";
+import { api, type QuizResultData } from "@/lib/api";
 
 type QuizResultProps = {
-  style: StyleData;
-  pkg: PackageData;
+  result: QuizResultData;
   locale: string;
 };
 
-export function QuizResult({ style, pkg, locale }: QuizResultProps) {
+export function QuizResult({ result, locale }: QuizResultProps) {
   const t = useTranslations("quiz.result");
+
+  const { style, references, package: pkg } = result;
 
   const styleName = locale === "ru" ? style.name_ru : style.name_en;
   const styleDesc = locale === "ru" ? style.description_ru : style.description_en;
-  const pkgName = locale === "ru" ? pkg.name_ru : pkg.name_en;
-  const features = locale === "ru" ? pkg.features_ru : pkg.features_en;
+  const pkgName = pkg ? (locale === "ru" ? pkg.name_ru : pkg.name_en) : null;
+
+  async function handleContactSubmit(data: {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+  }) {
+    await api("/api/public/leads", {
+      method: "POST",
+      body: JSON.stringify({
+        ...data,
+        style_id: style.id,
+        package_id: pkg?.id ?? null,
+      }),
+    });
+  }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
-      {/* Success banner */}
-      <div className="rounded-lg border border-accent bg-accent-muted p-6 text-center">
-        <CheckCircle className="mx-auto mb-3 h-12 w-12 text-accent" />
-        <h1 className="mb-2 text-3xl font-bold text-text-primary">{t("title")}</h1>
-        <p className="text-text-secondary">{t("subtitle")}</p>
-      </div>
-
-      {/* Style recommendation */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">{styleName}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-text-secondary leading-relaxed">{styleDesc}</p>
-        </CardContent>
-      </Card>
-
-      {/* Style examples */}
-      {style.references.length > 0 && (
-        <div>
-          <h2 className="mb-4 text-xl font-semibold text-text-primary">
-            {t("examples")}
-          </h2>
-          <div className="space-y-6">
-            {style.references.map((ref) => {
-              const refLabel = locale === "ru" ? ref.label_ru : ref.label_en;
-              return (
-                <div key={ref.id}>
-                  <BrowserPreview
-                    url={ref.url}
-                    label={refLabel}
-                    screenshotUrl={ref.screenshot_url}
-                    embeddable={ref.embeddable}
-                  />
-                  <p className="mt-2 text-sm font-medium text-text-secondary">
-                    {refLabel}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+    <section className="mx-auto min-h-screen max-w-4xl px-6 py-20">
+      <div className="mx-auto max-w-3xl space-y-8">
+        {/* Success banner */}
+        <div className="rounded-lg border border-accent bg-accent-muted p-6 text-center">
+          <CheckCircle className="mx-auto mb-3 h-12 w-12 text-accent" />
+          <h1 className="mb-2 text-3xl font-bold text-text-primary">{t("title")}</h1>
+          <p className="text-text-secondary">{t("subtitle")}</p>
         </div>
-      )}
 
-      {/* Package card */}
-      <Card className="border-accent">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5 text-accent" />
-            <CardTitle>{t("package")}</CardTitle>
-          </div>
-          <Badge variant="accent" className="w-fit text-sm">
-            {pkgName}
-          </Badge>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Price and delivery */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex items-center gap-3 rounded-lg bg-bg-tertiary p-4">
-              <DollarSign className="h-5 w-5 text-accent" />
-              <div>
-                <p className="text-xs text-text-muted">{t("priceRange")}</p>
-                <p className="font-semibold text-text-primary">
-                  {formatPrice(pkg.price_from, pkg.price_to, pkg.currency)}
-                </p>
-              </div>
+        {/* Style recommendation */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">{styleName}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-text-secondary leading-relaxed">{styleDesc}</p>
+          </CardContent>
+        </Card>
+
+        {/* Style examples */}
+        {references.length > 0 && (
+          <div>
+            <h2 className="mb-4 text-xl font-semibold text-text-primary">
+              {t("examples")}
+            </h2>
+            <div className="space-y-6">
+              {references.map((ref) => {
+                const refLabel = locale === "ru" ? ref.label_ru : ref.label_en;
+                return (
+                  <div key={ref.id}>
+                    <DemoFrame src={ref.url} title={refLabel} />
+                    <p className="mt-2 text-sm font-medium text-text-secondary">
+                      {refLabel}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
-            {pkg.delivery_days !== null && (
-              <div className="flex items-center gap-3 rounded-lg bg-bg-tertiary p-4">
-                <Clock className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-text-muted">{t("delivery")}</p>
-                  <p className="font-semibold text-text-primary">
-                    {t("days", { count: pkg.delivery_days })}
-                  </p>
+          </div>
+        )}
+
+        {/* Package card */}
+        {pkg && (
+          <Card className="border-accent">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-accent" />
+                <CardTitle>{t("package")}</CardTitle>
+              </div>
+              <Badge variant="accent" className="w-fit text-sm">
+                {pkgName}
+              </Badge>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex items-center gap-3 rounded-lg bg-bg-tertiary p-4">
+                  <DollarSign className="h-5 w-5 text-accent" />
+                  <div>
+                    <p className="text-xs text-text-muted">{t("priceRange")}</p>
+                    <p className="font-semibold text-text-primary">
+                      {formatPrice(pkg.price_from, pkg.price_to, "RUB")}
+                    </p>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
+            </CardContent>
+          </Card>
+        )}
 
-          {/* Features */}
-          {features.length > 0 && (
-            <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-text-muted">
-                {t("features")}
-              </h3>
-              <ul className="space-y-2">
-                {features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-2 text-text-secondary">
-                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {/* Lead capture form */}
+        <div className="rounded-lg border border-border bg-bg-secondary p-8">
+          <ContactForm onSubmit={handleContactSubmit} />
+        </div>
 
-      {/* CTA */}
-      <div className="rounded-lg bg-accent-muted p-6 text-center">
-        <p className="mb-4 text-lg font-medium text-text-primary">{t("cta")}</p>
-        <Button variant="outline" asChild>
-          <Link href="/quiz">
-            <RefreshCw className="h-4 w-4" />
-            {t("startNew")}
-          </Link>
-        </Button>
+        {/* Start over CTA */}
+        <div className="rounded-lg bg-accent-muted p-6 text-center">
+          <Button variant="outline" asChild>
+            <Link href="/quiz">
+              <RefreshCw className="h-4 w-4" />
+              {t("startNew")}
+            </Link>
+          </Button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

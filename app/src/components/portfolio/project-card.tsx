@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { getLocalizedField, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +14,7 @@ import {
   Server,
   Wrench,
   Layout,
+  ExternalLink,
 } from "lucide-react";
 
 export type PortfolioProject = {
@@ -66,12 +70,18 @@ type ProjectCardProps = {
   locale: string;
 };
 
+const MAX_VISIBLE = 3;
+
 export function ProjectCard({ project, locale }: ProjectCardProps) {
+  const [tagsExpanded, setTagsExpanded] = useState(false);
+
   const title = getLocalizedField(project, "title", locale);
   const description = getLocalizedField(project, "description", locale);
   const Icon = typeIcons[project.type] ?? Globe;
   const typeLabel = project.type.charAt(0) + project.type.slice(1).toLowerCase();
   const techStack = project.tech_stack ?? [];
+  const visibleTags = tagsExpanded ? techStack : techStack.slice(0, MAX_VISIBLE);
+  const hiddenCount = techStack.length - MAX_VISIBLE;
 
   return (
     <Link href={`/portfolio/${project.slug}`}>
@@ -98,6 +108,18 @@ export function ProjectCard({ project, locale }: ProjectCardProps) {
               {typeLabel}
             </Badge>
           </div>
+          {project.live_url && (
+            <a
+              href={project.live_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute right-3 top-3 flex items-center gap-1 rounded border border-border bg-bg-primary/80 px-2 py-1 text-xs text-text-secondary backdrop-blur-sm transition-colors hover:border-accent hover:text-accent"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Open
+            </a>
+          )}
         </div>
 
         <CardContent className="p-5">
@@ -111,15 +133,26 @@ export function ProjectCard({ project, locale }: ProjectCardProps) {
           {/* Tech stack badges */}
           {techStack.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {techStack.slice(0, 4).map((tech) => (
+              {visibleTags.map((tech) => (
                 <Badge key={tech} variant="outline" className="text-xs">
                   {tech}
                 </Badge>
               ))}
-              {techStack.length > 4 && (
-                <Badge variant="outline" className="text-xs">
-                  +{techStack.length - 4}
-                </Badge>
+              {!tagsExpanded && hiddenCount > 0 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsExpanded(true); }}
+                  className="text-xs px-2 py-0.5 rounded border border-border text-text-secondary hover:border-accent transition-colors"
+                >
+                  +{hiddenCount}
+                </button>
+              )}
+              {tagsExpanded && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); e.preventDefault(); setTagsExpanded(false); }}
+                  className="text-xs px-2 py-0.5 rounded border border-border text-text-secondary hover:border-accent transition-colors"
+                >
+                  Hide
+                </button>
               )}
             </div>
           )}

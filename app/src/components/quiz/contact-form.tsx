@@ -30,8 +30,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
   function validate(): boolean {
     const newErrors: Record<string, boolean> = {};
     if (!name.trim()) newErrors.name = true;
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      newErrors.email = true;
+    if (!email.trim()) newErrors.email = true;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }

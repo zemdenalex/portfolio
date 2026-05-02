@@ -15,21 +15,22 @@ var (
 )
 
 type Project struct {
-	ID            string    `json:"id"`
-	Slug          string    `json:"slug"`
-	TitleEn       string    `json:"title_en"`
-	TitleRu       string    `json:"title_ru"`
-	DescriptionEn string    `json:"description_en"`
-	DescriptionRu string    `json:"description_ru"`
-	Type          string    `json:"type"`
-	Status        string    `json:"status"`
-	ThumbnailURL  *string   `json:"thumbnail_url"`
-	LiveURL       *string   `json:"live_url"`
-	Featured      bool      `json:"featured"`
-	TechStack     []string  `json:"tech_stack"`
-	SortOrder     int       `json:"sort_order"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID               string    `json:"id"`
+	Slug             string    `json:"slug"`
+	TitleEn          string    `json:"title_en"`
+	TitleRu          string    `json:"title_ru"`
+	DescriptionEn    string    `json:"description_en"`
+	DescriptionRu    string    `json:"description_ru"`
+	Type             string    `json:"type"`
+	Status           string    `json:"status"`
+	ThumbnailURL     *string   `json:"thumbnail_url"`
+	LiveURL          *string   `json:"live_url"`
+	Featured         bool      `json:"featured"`
+	TechStack        []string  `json:"tech_stack"`
+	SortOrder        int       `json:"sort_order"`
+	IsIframeFriendly bool      `json:"is_iframe_friendly"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 type ContentBlock struct {
@@ -48,18 +49,19 @@ type ProjectWithBlocks struct {
 }
 
 type CreateProjectRequest struct {
-	Slug          string   `json:"slug"`
-	TitleEn       string   `json:"title_en"`
-	TitleRu       string   `json:"title_ru"`
-	DescriptionEn string   `json:"description_en"`
-	DescriptionRu string   `json:"description_ru"`
-	Type          string   `json:"type"`
-	Status        string   `json:"status"`
-	ThumbnailURL  *string  `json:"thumbnail_url"`
-	LiveURL       *string  `json:"live_url"`
-	Featured      bool     `json:"featured"`
-	TechStack     []string `json:"tech_stack"`
-	SortOrder     int      `json:"sort_order"`
+	Slug             string   `json:"slug"`
+	TitleEn          string   `json:"title_en"`
+	TitleRu          string   `json:"title_ru"`
+	DescriptionEn    string   `json:"description_en"`
+	DescriptionRu    string   `json:"description_ru"`
+	Type             string   `json:"type"`
+	Status           string   `json:"status"`
+	ThumbnailURL     *string  `json:"thumbnail_url"`
+	LiveURL          *string  `json:"live_url"`
+	Featured         bool     `json:"featured"`
+	TechStack        []string `json:"tech_stack"`
+	SortOrder        int      `json:"sort_order"`
+	IsIframeFriendly bool     `json:"is_iframe_friendly"`
 }
 
 func (r *CreateProjectRequest) Validate() error {
@@ -79,18 +81,19 @@ func (r *CreateProjectRequest) Validate() error {
 }
 
 type UpdateProjectRequest struct {
-	Slug          *string  `json:"slug"`
-	TitleEn       *string  `json:"title_en"`
-	TitleRu       *string  `json:"title_ru"`
-	DescriptionEn *string  `json:"description_en"`
-	DescriptionRu *string  `json:"description_ru"`
-	Type          *string  `json:"type"`
-	Status        *string  `json:"status"`
-	ThumbnailURL  *string  `json:"thumbnail_url"`
-	LiveURL       *string  `json:"live_url"`
-	Featured      *bool    `json:"featured"`
-	TechStack     []string `json:"tech_stack"`
-	SortOrder     *int     `json:"sort_order"`
+	Slug             *string  `json:"slug"`
+	TitleEn          *string  `json:"title_en"`
+	TitleRu          *string  `json:"title_ru"`
+	DescriptionEn    *string  `json:"description_en"`
+	DescriptionRu    *string  `json:"description_ru"`
+	Type             *string  `json:"type"`
+	Status           *string  `json:"status"`
+	ThumbnailURL     *string  `json:"thumbnail_url"`
+	LiveURL          *string  `json:"live_url"`
+	Featured         *bool    `json:"featured"`
+	TechStack        []string `json:"tech_stack"`
+	SortOrder        *int     `json:"sort_order"`
+	IsIframeFriendly *bool    `json:"is_iframe_friendly"`
 }
 
 type ReorderRequest struct {

@@ -20,7 +20,7 @@ func NewService(db *pgxpool.Pool) *Service {
 func (s *Service) ListPublished(ctx context.Context, params ListParams) ([]Project, error) {
 	query := `SELECT id, slug, title_en, title_ru, description_en, description_ru,
 		type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-		created_at, updated_at
+		is_iframe_friendly, created_at, updated_at
 		FROM portfolio_projects WHERE status = 'PUBLISHED'`
 	args := []any{}
 	argIdx := 1
@@ -59,7 +59,7 @@ func (s *Service) ListPublished(ctx context.Context, params ListParams) ([]Proje
 func (s *Service) ListAll(ctx context.Context, params ListParams) ([]Project, error) {
 	query := `SELECT id, slug, title_en, title_ru, description_en, description_ru,
 		type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-		created_at, updated_at
+		is_iframe_friendly, created_at, updated_at
 		FROM portfolio_projects WHERE 1=1`
 	args := []any{}
 	argIdx := 1
@@ -105,12 +105,12 @@ func (s *Service) GetBySlug(ctx context.Context, slug string) (*ProjectWithBlock
 	err := s.db.QueryRow(ctx,
 		`SELECT id, slug, title_en, title_ru, description_en, description_ru,
 			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-			created_at, updated_at
+			is_iframe_friendly, created_at, updated_at
 			FROM portfolio_projects WHERE slug = $1`,
 		slug,
 	).Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, ErrProjectNotFound
 	}
@@ -128,12 +128,12 @@ func (s *Service) GetByID(ctx context.Context, id string) (*ProjectWithBlocks, e
 	err := s.db.QueryRow(ctx,
 		`SELECT id, slug, title_en, title_ru, description_en, description_ru,
 			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-			created_at, updated_at
+			is_iframe_friendly, created_at, updated_at
 			FROM portfolio_projects WHERE id = $1`,
 		id,
 	).Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, ErrProjectNotFound
 	}
@@ -158,17 +158,17 @@ func (s *Service) Create(ctx context.Context, req *CreateProjectRequest) (*Proje
 	var p Project
 	err := s.db.QueryRow(ctx,
 		`INSERT INTO portfolio_projects (slug, title_en, title_ru, description_en, description_ru,
-			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order, is_iframe_friendly)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 			RETURNING id, slug, title_en, title_ru, description_en, description_ru,
 			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-			created_at, updated_at`,
+			is_iframe_friendly, created_at, updated_at`,
 		req.Slug, req.TitleEn, req.TitleRu, req.DescriptionEn, req.DescriptionRu,
 		req.Type, req.Status, req.ThumbnailURL, req.LiveURL, req.Featured, req.TechStack,
-		req.SortOrder,
+		req.SortOrder, req.IsIframeFriendly,
 	).Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, fmt.Errorf("create project: %w", err)
 	}
@@ -241,6 +241,11 @@ func (s *Service) Update(ctx context.Context, id string, req *UpdateProjectReque
 		args = append(args, *req.SortOrder)
 		argIdx++
 	}
+	if req.IsIframeFriendly != nil {
+		setClauses = append(setClauses, fmt.Sprintf("is_iframe_friendly = $%d", argIdx))
+		args = append(args, *req.IsIframeFriendly)
+		argIdx++
+	}
 
 	if len(setClauses) == 0 {
 		return s.getProjectByID(ctx, id)
@@ -251,7 +256,7 @@ func (s *Service) Update(ctx context.Context, id string, req *UpdateProjectReque
 		`UPDATE portfolio_projects SET %s WHERE id = $%d
 		RETURNING id, slug, title_en, title_ru, description_en, description_ru,
 		type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-		created_at, updated_at`,
+		is_iframe_friendly, created_at, updated_at`,
 		strings.Join(setClauses, ", "), argIdx,
 	)
 
@@ -259,7 +264,7 @@ func (s *Service) Update(ctx context.Context, id string, req *UpdateProjectReque
 	err := s.db.QueryRow(ctx, query, args...).Scan(
 		&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, ErrProjectNotFound
 	}
@@ -361,12 +366,12 @@ func (s *Service) getProjectByID(ctx context.Context, id string) (*Project, erro
 	err := s.db.QueryRow(ctx,
 		`SELECT id, slug, title_en, title_ru, description_en, description_ru,
 			type, status, thumbnail_url, live_url, featured, tech_stack, sort_order,
-			created_at, updated_at
+			is_iframe_friendly, created_at, updated_at
 			FROM portfolio_projects WHERE id = $1`,
 		id,
 	).Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, ErrProjectNotFound
 	}
@@ -398,7 +403,7 @@ func scanProject(row pgx.CollectableRow) (Project, error) {
 	var p Project
 	err := row.Scan(&p.ID, &p.Slug, &p.TitleEn, &p.TitleRu, &p.DescriptionEn, &p.DescriptionRu,
 		&p.Type, &p.Status, &p.ThumbnailURL, &p.LiveURL, &p.Featured, &p.TechStack,
-		&p.SortOrder, &p.CreatedAt, &p.UpdatedAt)
+		&p.SortOrder, &p.IsIframeFriendly, &p.CreatedAt, &p.UpdatedAt)
 	return p, err
 }
 

@@ -13,7 +13,10 @@ export function LanguageSwitcher() {
 
   function switchLocale(locale: string) {
     if (locale === currentLocale) return;
-    router.replace(pathname, { locale });
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("scroll-pos", String(window.scrollY));
+    }
+    router.replace(pathname, { locale, scroll: false });
   }
 
   return (

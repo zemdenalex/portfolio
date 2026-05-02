@@ -47,7 +47,7 @@ export function PortfolioGrid({ projects, locale }: PortfolioGridProps) {
         onValueChange={setActiveFilter}
         className="mb-8"
       >
-        <TabsList className="flex flex-wrap gap-1">
+        <TabsList className="flex flex-wrap gap-1 justify-center">
           {filterKeys.map((key) => (
             <TabsTrigger key={key} value={key}>
               {t(key)}

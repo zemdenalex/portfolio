@@ -137,6 +137,24 @@ func (s *Service) SeedAdmin(ctx context.Context, email, password, name string) e
 	return nil
 }
 
+// ResetAdmin upserts an admin: updates password if email exists, inserts if not.
+func (s *Service) ResetAdmin(ctx context.Context, email, password, name string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("hash password: %w", err)
+	}
+
+	_, err = s.db.Exec(ctx,
+		`INSERT INTO admins (email, password_hash, name) VALUES ($1, $2, $3)
+		 ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, name = EXCLUDED.name`,
+		email, string(hash), name,
+	)
+	if err != nil {
+		return fmt.Errorf("upsert admin: %w", err)
+	}
+	return nil
+}
+
 func (s *Service) UpdateProfile(ctx context.Context, id int64, name string) error {
 	_, err := s.db.Exec(ctx, "UPDATE admins SET name = $1 WHERE id = $2", name, id)
 	return err

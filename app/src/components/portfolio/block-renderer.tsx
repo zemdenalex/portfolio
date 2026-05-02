@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Quote } from "lucide-react";
+import { DemoFrame } from "@/components/portfolio/demo-frame";
 
 /** Content block from Go API (snake_case fields) */
 export type ContentBlock = {
@@ -96,19 +97,10 @@ function GalleryBlock({ content }: { content: BlockContent }) {
 
 function EmbedBlock({ content }: { content: BlockContent }) {
   const url = content.url as string | undefined;
+  const caption = content.caption as string | undefined;
   if (!url) return null;
 
-  return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-border">
-      <iframe
-        src={url}
-        title="Embedded content"
-        className="absolute inset-0 h-full w-full"
-        loading="lazy"
-        allowFullScreen
-      />
-    </div>
-  );
+  return <DemoFrame src={url} title={caption ?? url} />;
 }
 
 /* ─── Code Block ─────────────────────────────────── */

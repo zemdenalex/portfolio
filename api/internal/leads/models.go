@@ -3,6 +3,7 @@ package leads
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 )
 
@@ -47,6 +48,12 @@ func (r *SubmitRequest) Validate() error {
 		return ErrNameRequired
 	}
 	if r.Email == "" {
+		return ErrEmailRequired
+	}
+	if len(r.Email) > 254 {
+		return ErrEmailRequired
+	}
+	if !strings.Contains(r.Email, "@") {
 		return ErrEmailRequired
 	}
 	return nil

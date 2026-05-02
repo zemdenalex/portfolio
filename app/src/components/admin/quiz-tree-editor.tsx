@@ -28,6 +28,11 @@ import {
 
 type NodeType = "QUESTION" | "RESULT";
 
+const STYLE_SLUGS = ["bold-modern", "corporate-classic", "creative-experimental", "minimalist"] as const;
+type StyleSlug = (typeof STYLE_SLUGS)[number];
+
+const PROJECT_TYPES = ["", "LANDING", "CORPORATE", "STORE", "BOT", "WEBAPP", "API", "FIXES"] as const;
+
 type QuizOptionData = {
   id: string;
   node_id: string;
@@ -35,6 +40,8 @@ type QuizOptionData = {
   label_ru: string;
   next_node_id: string | null;
   sort_order: number;
+  style_weights: Record<string, number> | null;
+  project_type: string | null;
 };
 
 type QuizResultData = {
@@ -377,13 +384,22 @@ function OptionRow({
   const [editing, setEditing] = useState(false);
   const [labelEn, setLabelEn] = useState(option.label_en);
   const [labelRu, setLabelRu] = useState(option.label_ru);
+  const [weights, setWeights] = useState<Record<string, number>>(
+    (option.style_weights as Record<string, number> | null) ?? {}
+  );
+  const [projectType, setProjectType] = useState<string>(option.project_type ?? "");
 
   async function handleSave() {
     setLoading(true);
     try {
       await api(`/api/admin/quiz/options/${option.id}`, {
         method: "PUT",
-        body: JSON.stringify({ label_en: labelEn, label_ru: labelRu }),
+        body: JSON.stringify({
+          label_en: labelEn,
+          label_ru: labelRu,
+          style_weights: weights,
+          project_type: projectType || null,
+        }),
       });
       setEditing(false);
       router.refresh();
@@ -417,67 +433,122 @@ function OptionRow({
     }
   }
 
+  function handleWeightChange(slug: StyleSlug, raw: string) {
+    const val = parseInt(raw, 10);
+    const clamped = isNaN(val) ? 0 : Math.min(3, Math.max(0, val));
+    setWeights((prev) => ({ ...prev, [slug]: clamped }));
+  }
+
   const linkedNode = option.next_node_id
     ? allNodes.find((n) => n.id === option.next_node_id)
     : null;
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      {!editing ? (
-        <>
-          <span
-            className="flex-1 cursor-pointer hover:text-accent transition-colors"
-            onClick={() => setEditing(true)}
-          >
-            {option.label_en}
-            {option.label_ru && (
-              <span className="text-text-muted ml-1">/ {option.label_ru}</span>
+    <div className="text-sm border border-border rounded p-2 space-y-2">
+      {/* Top row: label display / edit + link selector + delete */}
+      <div className="flex items-center gap-2">
+        {!editing ? (
+          <>
+            <span
+              className="flex-1 cursor-pointer hover:text-accent transition-colors"
+              onClick={() => setEditing(true)}
+            >
+              {option.label_en}
+              {option.label_ru && (
+                <span className="text-text-muted ml-1">/ {option.label_ru}</span>
+              )}
+            </span>
+            <Select
+              value={option.next_node_id ?? "__none__"}
+              onValueChange={handleLinkNode}
+            >
+              <SelectTrigger className="h-7 w-48 text-xs">
+                <SelectValue placeholder="Link to node..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">No link</SelectItem>
+                {allNodes
+                  .filter((n) => n.id !== option.node_id)
+                  .map((n) => (
+                    <SelectItem key={n.id} value={n.id}>
+                      {n.question_en || n.id.slice(0, 8)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            {linkedNode && (
+              <Badge variant="outline" className="text-xs">
+                {linkedNode.question_en?.slice(0, 20) || "linked"}
+              </Badge>
             )}
-          </span>
-          <Select
-            value={option.next_node_id ?? "__none__"}
-            onValueChange={handleLinkNode}
+          </>
+        ) : (
+          <>
+            <Input
+              value={labelEn}
+              onChange={(e) => setLabelEn(e.target.value)}
+              className="h-7 text-xs flex-1"
+            />
+            <Input
+              value={labelRu}
+              onChange={(e) => setLabelRu(e.target.value)}
+              className="h-7 text-xs flex-1"
+            />
+          </>
+        )}
+        <Button variant="ghost" size="sm" onClick={handleDelete} disabled={loading}>
+          <Trash2 className="h-3 w-3 text-red-500" />
+        </Button>
+      </div>
+
+      {/* Style weights + project type — always visible */}
+      <div className="pl-1 space-y-2">
+        <div>
+          <p className="text-xs font-medium text-text-secondary mb-1">Style weights (0–3)</p>
+          <div className="grid grid-cols-2 gap-2">
+            {STYLE_SLUGS.map((slug) => (
+              <label key={slug} className="flex flex-col gap-0.5">
+                <span className="text-xs text-text-secondary">{slug}</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={3}
+                  value={weights[slug] ?? 0}
+                  onChange={(e) => {
+                    handleWeightChange(slug, e.target.value);
+                    if (!editing) setEditing(true);
+                  }}
+                  className="w-full px-2 py-1 border border-border rounded text-sm bg-bg-primary"
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <label className="flex flex-col gap-0.5">
+          <span className="text-xs text-text-secondary">Project type (optional)</span>
+          <select
+            value={projectType}
+            onChange={(e) => {
+              setProjectType(e.target.value);
+              if (!editing) setEditing(true);
+            }}
+            className="w-full px-2 py-1 border border-border rounded text-sm bg-bg-primary"
           >
-            <SelectTrigger className="h-7 w-48 text-xs">
-              <SelectValue placeholder="Link to node..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__none__">No link</SelectItem>
-              {allNodes
-                .filter((n) => n.id !== option.node_id)
-                .map((n) => (
-                  <SelectItem key={n.id} value={n.id}>
-                    {n.question_en || n.id.slice(0, 8)}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-          {linkedNode && (
-            <Badge variant="outline" className="text-xs">
-              {linkedNode.question_en?.slice(0, 20) || "linked"}
-            </Badge>
-          )}
-        </>
-      ) : (
-        <>
-          <Input
-            value={labelEn}
-            onChange={(e) => setLabelEn(e.target.value)}
-            className="h-7 text-xs flex-1"
-          />
-          <Input
-            value={labelRu}
-            onChange={(e) => setLabelRu(e.target.value)}
-            className="h-7 text-xs flex-1"
-          />
+            {PROJECT_TYPES.map((pt) => (
+              <option key={pt} value={pt}>
+                {pt === "" ? "— none —" : pt}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {editing && (
           <Button size="sm" onClick={handleSave} disabled={loading}>
-            <Save className="h-3 w-3" />
+            <Save className="h-3 w-3 mr-1" /> Save
           </Button>
-        </>
-      )}
-      <Button variant="ghost" size="sm" onClick={handleDelete} disabled={loading}>
-        <Trash2 className="h-3 w-3 text-red-500" />
-      </Button>
+        )}
+      </div>
     </div>
   );
 }
