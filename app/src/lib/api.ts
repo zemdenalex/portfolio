@@ -29,6 +29,46 @@ export async function api<T>(
   return json.data;
 }
 
+export type QuizResultData = {
+  style: {
+    id: string;
+    slug: string;
+    name_en: string;
+    name_ru: string;
+    description_en: string;
+    description_ru: string;
+  };
+  references: Array<{
+    id: string;
+    style_id: string;
+    url: string;
+    label_en: string;
+    label_ru: string;
+    type: string;
+    sort_order: number;
+    screenshot_url: string | null;
+    embeddable: boolean;
+  }>;
+  package: {
+    id: string;
+    slug: string;
+    name_en: string;
+    name_ru: string;
+    project_type: string;
+    description_en: string;
+    description_ru: string;
+    price_from: number;
+    price_to: number;
+  } | null;
+};
+
+export async function postQuizResult(optionIds: string[]): Promise<QuizResultData> {
+  return api<QuizResultData>("/api/public/quiz/result", {
+    method: "POST",
+    body: JSON.stringify({ option_ids: optionIds }),
+  });
+}
+
 // Server-side helper that forwards cookies from the incoming request
 export async function serverApi<T>(
   path: string,

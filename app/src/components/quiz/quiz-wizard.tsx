@@ -6,7 +6,6 @@ import { useRouter } from "@/i18n/navigation";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { QuizStep } from "./quiz-step";
-import { ContactForm } from "./contact-form";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 
@@ -47,14 +46,10 @@ export function QuizWizard({ initialNode, locale, estimatedSteps }: QuizWizardPr
   const router = useRouter();
   const [currentNode, setCurrentNode] = useState<QuizNodeData>(initialNode);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [history, setHistory] = useState<QuizNodeData[]>([]);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showContact, setShowContact] = useState(false);
-  const [resultData, setResultData] = useState<{
-    styleId: string;
-    packageId: string;
-  } | null>(null);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [transitioning, setTransitioning] = useState(false);
 
@@ -92,7 +87,14 @@ export function QuizWizard({ initialNode, locale, estimatedSteps }: QuizWizardPr
       label,
     };
 
-    if (!option.next_node_id) return;
+    const nextOptionIds = [...selectedOptionIds, optionId];
+
+    // Terminal option — no next node, navigate to result with collected IDs
+    if (!option.next_node_id) {
+      setSelectedOptionIds(nextOptionIds);
+      router.push(`/quiz/result?ids=${nextOptionIds.join(",")}`);
+      return;
+    }
 
     setLoading(true);
     const nextNode = await fetchNode(option.next_node_id);
@@ -103,61 +105,23 @@ export function QuizWizard({ initialNode, locale, estimatedSteps }: QuizWizardPr
     triggerTransition("forward", () => {
       setHistory((prev) => [...prev, currentNode]);
       setAnswers((prev) => [...prev, answer]);
+      setSelectedOptionIds(nextOptionIds);
       setSelectedOptionId(null);
-
-      if (nextNode.type === "RESULT" && nextNode.result) {
-        setResultData({
-          styleId: nextNode.result.style_id,
-          packageId: nextNode.result.package_id,
-        });
-        setShowContact(true);
-      } else {
-        setCurrentNode(nextNode);
-      }
+      setCurrentNode(nextNode);
     });
   }
 
   function handleBack() {
-    if (showContact) {
-      triggerTransition("back", () => {
-        setShowContact(false);
-        setResultData(null);
-      });
-      return;
-    }
-
     if (history.length === 0) return;
 
     triggerTransition("back", () => {
       const previousNode = history[history.length - 1];
       setHistory((prev) => prev.slice(0, -1));
       setAnswers((prev) => prev.slice(0, -1));
+      setSelectedOptionIds((prev) => prev.slice(0, -1));
       setCurrentNode(previousNode);
       setSelectedOptionId(null);
     });
-  }
-
-  async function handleContactSubmit(data: {
-    name: string;
-    email: string;
-    phone: string;
-    message: string;
-  }) {
-    await api("/api/public/leads", {
-      method: "POST",
-      body: JSON.stringify({
-        ...data,
-        answers,
-        style_id: resultData?.styleId ?? null,
-        package_id: resultData?.packageId ?? null,
-      }),
-    });
-
-    if (resultData) {
-      router.push(
-        `/quiz/result?styleId=${resultData.styleId}&packageId=${resultData.packageId}`,
-      );
-    }
   }
 
   const question =
@@ -184,7 +148,7 @@ export function QuizWizard({ initialNode, locale, estimatedSteps }: QuizWizardPr
       </div>
 
       {/* Back button */}
-      {(answers.length > 0 || showContact) && (
+      {answers.length > 0 && (
         <button
           type="button"
           onClick={handleBack}
@@ -204,17 +168,13 @@ export function QuizWizard({ initialNode, locale, estimatedSteps }: QuizWizardPr
           !transitioning && "translate-x-0 opacity-100",
         )}
       >
-        {showContact ? (
-          <ContactForm onSubmit={handleContactSubmit} />
-        ) : (
-          <QuizStep
-            question={question ?? ""}
-            options={currentNode.options}
-            locale={locale}
-            selectedOptionId={selectedOptionId}
-            onSelect={handleOptionSelect}
-          />
-        )}
+        <QuizStep
+          question={question ?? ""}
+          options={currentNode.options}
+          locale={locale}
+          selectedOptionId={selectedOptionId}
+          onSelect={handleOptionSelect}
+        />
       </div>
 
       {/* Loading overlay */}
