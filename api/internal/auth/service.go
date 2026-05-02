@@ -144,23 +144,13 @@ func (s *Service) ResetAdmin(ctx context.Context, email, password, name string) 
 		return fmt.Errorf("hash password: %w", err)
 	}
 
-	tag, err := s.db.Exec(ctx,
-		"UPDATE admins SET password_hash = $1, name = $2 WHERE email = $3",
-		string(hash), name, email,
-	)
-	if err != nil {
-		return fmt.Errorf("update admin: %w", err)
-	}
-	if tag.RowsAffected() > 0 {
-		return nil
-	}
-
 	_, err = s.db.Exec(ctx,
-		"INSERT INTO admins (email, password_hash, name) VALUES ($1, $2, $3)",
+		`INSERT INTO admins (email, password_hash, name) VALUES ($1, $2, $3)
+		 ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, name = EXCLUDED.name`,
 		email, string(hash), name,
 	)
 	if err != nil {
-		return fmt.Errorf("insert admin: %w", err)
+		return fmt.Errorf("upsert admin: %w", err)
 	}
 	return nil
 }
