@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction-Diffusion</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    color: rgba(255,255,255,0.4);
+  }
+  canvas { display: block; image-rendering: pixelated; }
+  #info {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    z-index: 10;
+    text-align: center;
+    line-height: 1.8;
+  }
+  #title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    z-index: 10;
+  }
+  #preset-name {
+    position: fixed;
+    top: 46px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 1px;
+    opacity: 0.5;
+    z-index: 10;
+    transition: opacity 0.5s;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="title">Reaction-Diffusion</div>
+<div id="preset-name">coral — how Turing explained leopard spots</div>
+<div id="info">
+  click to seed &middot; 1-6: patterns &middot; r: reset &middot; space: pause<br>
+  two chemicals. one activates, one inhibits. this is how stripes form on zebrafish.
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const presetEl = document.getElementById('preset-name');
+
+// Lower resolution for performance
+const SCALE = 3;
+let W, H, GW, GH;
+
+function resize() {
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W;
+  canvas.height = H;
+  GW = Math.ceil(W / SCALE);
+  GH = Math.ceil(H / SCALE);
+}
+resize();
+
+// Two chemical concentrations: A and B
+let gridA, gridB, nextA, nextB;
+
+function initGrids() {
+  gridA = new Float32Array(GW * GH);
+  gridB = new Float32Array(GW * GH);
+  nextA = new Float32Array(GW * GH);
+  nextB = new Float32Array(GW * GH);
+
+  // Fill with chemical A
+  gridA.fill(1);
+  gridB.fill(0);
+
+  // Seed some B in the center
+  seedCenter();
+}
+
+function seedCenter() {
+  const cx = Math.floor(GW / 2);
+  const cy = Math.floor(GH / 2);
+  for (let dy = -10; dy <= 10; dy++) {
+    for (let dx = -10; dx <= 10; dx++) {
+      if (dx*dx + dy*dy < 100) {
+        const i = (cy + dy) * GW + (cx + dx);
+        if (i >= 0 && i < GW * GH) {
+          gridB[i] = 1;
+        }
+      }
+    }
+  }
+}
+
+function seedAt(px, py) {
+  const gx = Math.floor(px / SCALE);
+  const gy = Math.floor(py / SCALE);
+  for (let dy = -6; dy <= 6; dy++) {
+    for (let dx = -6; dx <= 6; dx++) {
+      if (dx*dx + dy*dy < 36) {
+        const nx = gx + dx;
+        const ny = gy + dy;
+        if (nx >= 0 && nx < GW && ny >= 0 && ny < GH) {
+          gridB[ny * GW + nx] = 1;
+        }
+      }
+    }
+  }
+}
+
+// Gray-Scott model parameters
+// Different feed/kill rates produce wildly different patterns
+const presets = [
+  { name: 'coral', f: 0.0545, k: 0.062, desc: 'coral — how Turing explained leopard spots' },
+  { name: 'mitosis', f: 0.0367, k: 0.0649, desc: 'mitosis — cells dividing, endlessly' },
+  { name: 'spirals', f: 0.014, k: 0.054, desc: 'spirals — rotating waves, like a chemical clock' },
+  { name: 'worms', f: 0.058, k: 0.065, desc: 'worms — self-replicating tubes' },
+  { name: 'maze', f: 0.029, k: 0.057, desc: 'maze — Turing patterns, the kind on seashells' },
+  { name: 'holes', f: 0.039, k: 0.058, desc: 'holes — negative space organizing itself' },
+];
+let currentPreset = 0;
+let feed = presets[0].f;
+let kill = presets[0].k;
+
+const dA = 1.0;   // Diffusion rate of A
+const dB = 0.5;   // Diffusion rate of B
+const dt = 1.0;
+
+let paused = false;
+
+function laplacian(grid, x, y) {
+  const i = y * GW + x;
+  const w = GW;
+  // 5-point stencil
+  let sum = -4 * grid[i];
+  sum += grid[y * w + ((x + 1) % GW)];
+  sum += grid[y * w + ((x - 1 + GW) % GW)];
+  sum += grid[((y + 1) % GH) * w + x];
+  sum += grid[((y - 1 + GH) % GH) * w + x];
+  return sum;
+}
+
+function step() {
+  for (let y = 0; y < GH; y++) {
+    for (let x = 0; x < GW; x++) {
+      const i = y * GW + x;
+      const a = gridA[i];
+      const b = gridB[i];
+      const lA = laplacian(gridA, x, y);
+      const lB = laplacian(gridB, x, y);
+      const reaction = a * b * b;
+
+      nextA[i] = a + (dA * lA - reaction + feed * (1 - a)) * dt;
+      nextB[i] = b + (dB * lB + reaction - (kill + feed) * b) * dt;
+
+      // Clamp
+      nextA[i] = Math.max(0, Math.min(1, nextA[i]));
+      nextB[i] = Math.max(0, Math.min(1, nextB[i]));
+    }
+  }
+  [gridA, nextA] = [nextA, gridA];
+  [gridB, nextB] = [nextB, gridB];
+}
+
+function render() {
+  const imageData = ctx.createImageData(W, H);
+  const data = imageData.data;
+
+  for (let py = 0; py < H; py++) {
+    const gy = Math.floor(py / SCALE);
+    for (let px = 0; px < W; px++) {
+      const gx = Math.floor(px / SCALE);
+      const gi = gy * GW + gx;
+      const a = gridA[gi];
+      const b = gridB[gi];
+      const val = a - b;
+
+      const pi = (py * W + px) * 4;
+      // Color: dark where B dominates, light where A dominates
+      const t = Math.max(0, Math.min(1, val));
+      data[pi]     = Math.floor(t * 20 + (1-t) * 80);       // R
+      data[pi + 1] = Math.floor(t * 25 + (1-t) * 140);      // G
+      data[pi + 2] = Math.floor(t * 40 + (1-t) * 200);      // B
+      data[pi + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+initGrids();
+
+function loop() {
+  if (!paused) {
+    // Multiple steps per frame for speed
+    for (let i = 0; i < 8; i++) step();
+    render();
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// --- Interaction ---
+canvas.addEventListener('click', (e) => seedAt(e.clientX, e.clientY));
+
+let dragging = false;
+canvas.addEventListener('mousedown', () => dragging = true);
+canvas.addEventListener('mouseup', () => dragging = false);
+canvas.addEventListener('mousemove', (e) => { if (dragging) seedAt(e.clientX, e.clientY); });
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); paused = !paused; }
+  if (e.key === 'r') { initGrids(); }
+
+  const n = parseInt(e.key);
+  if (n >= 1 && n <= presets.length) {
+    currentPreset = n - 1;
+    feed = presets[currentPreset].f;
+    kill = presets[currentPreset].k;
+    presetEl.textContent = presets[currentPreset].desc;
+    presetEl.style.opacity = '0.4';
+    setTimeout(() => presetEl.style.opacity = '0.2', 2000);
+    initGrids();
+  }
+});
+
+window.addEventListener('resize', () => {
+  resize();
+  initGrids();
+});
+</script>
+</body>
+</html>

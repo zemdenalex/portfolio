@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noise → World</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    color: rgba(255,255,255,0.4);
+  }
+  canvas { display: block; }
+  #info {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.55;
+    z-index: 10;
+    text-align: center;
+    line-height: 1.8;
+  }
+  #title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="title">noise → world</div>
+<div id="info">
+  random noise, smoothed, becomes terrain. this is how every game generates landscapes.<br>
+  click: new world &middot; scroll: change elevation
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', () => { resize(); generate(); });
+
+// --- Simple value noise with interpolation ---
+let seed = Math.random() * 10000;
+function hash(x, y) {
+  let h = seed + x * 374761393 + y * 668265263;
+  h = (h ^ (h >> 13)) * 1274126177;
+  h = h ^ (h >> 16);
+  return (h & 0x7fffffff) / 0x7fffffff;
+}
+
+function smoothNoise(x, y) {
+  const ix = Math.floor(x);
+  const iy = Math.floor(y);
+  const fx = x - ix;
+  const fy = y - iy;
+  // Smoothstep
+  const sx = fx * fx * (3 - 2 * fx);
+  const sy = fy * fy * (3 - 2 * fy);
+
+  const v00 = hash(ix, iy);
+  const v10 = hash(ix + 1, iy);
+  const v01 = hash(ix, iy + 1);
+  const v11 = hash(ix + 1, iy + 1);
+
+  const top = v00 + (v10 - v00) * sx;
+  const bot = v01 + (v11 - v01) * sx;
+  return top + (bot - top) * sy;
+}
+
+function fbm(x, y, octaves) {
+  let val = 0;
+  let amp = 1;
+  let freq = 1;
+  let max = 0;
+  for (let i = 0; i < octaves; i++) {
+    val += smoothNoise(x * freq, y * freq) * amp;
+    max += amp;
+    amp *= 0.5;
+    freq *= 2;
+  }
+  return val / max;
+}
+
+let waterLevel = 0.38;
+let time = 0;
+
+function getColor(h) {
+  // Deep water
+  if (h < waterLevel - 0.1) return [15, 30, 80];
+  // Shallow water
+  if (h < waterLevel) {
+    const t = (h - (waterLevel - 0.1)) / 0.1;
+    return [15 + t * 20, 40 + t * 50, 90 + t * 50];
+  }
+  // Beach
+  if (h < waterLevel + 0.03) return [180, 170, 120];
+  // Lowland grass
+  if (h < 0.5) {
+    const t = (h - waterLevel - 0.03) / (0.5 - waterLevel - 0.03);
+    return [40 + t * 20, 100 + t * 30, 30 + t * 10];
+  }
+  // Highland
+  if (h < 0.65) {
+    const t = (h - 0.5) / 0.15;
+    return [60 + t * 40, 130 - t * 30, 40 - t * 10];
+  }
+  // Mountain
+  if (h < 0.8) {
+    const t = (h - 0.65) / 0.15;
+    return [100 + t * 20, 90 + t * 10, 70 + t * 20];
+  }
+  // Snow
+  const t = Math.min((h - 0.8) / 0.2, 1);
+  return [120 + t * 120, 120 + t * 120, 130 + t * 120];
+}
+
+// Heightmap
+let heightmap;
+
+function generateHeightmap() {
+  heightmap = new Float32Array(W * H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const nx = x / W * 6;
+      const ny = y / H * 4;
+      let h = fbm(nx, ny, 7);
+      // Add some ridged noise for mountains
+      const ridged = 1 - Math.abs(fbm(nx * 1.5 + 100, ny * 1.5 + 100, 5) * 2 - 1);
+      h = h * 0.7 + ridged * ridged * 0.3;
+      heightmap[y * W + x] = h;
+    }
+  }
+}
+
+function render() {
+  const imageData = ctx.createImageData(W, H);
+  const d = imageData.data;
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const h = heightmap[y * W + x];
+      let [r, g, b] = getColor(h);
+
+      // Simple shading: use height difference for shadow
+      if (x > 0 && y > 0) {
+        const hLeft = heightmap[y * W + (x - 1)];
+        const hUp = heightmap[(y - 1) * W + x];
+        const shadow = (h - hLeft) * 3 + (h - hUp) * 3;
+        r = Math.max(0, Math.min(255, r + shadow * 80));
+        g = Math.max(0, Math.min(255, g + shadow * 80));
+        b = Math.max(0, Math.min(255, b + shadow * 80));
+      }
+
+      // Water shimmer
+      if (h < waterLevel) {
+        const shimmer = Math.sin(x * 0.05 + y * 0.03 + time * 0.02) * 8;
+        r = Math.max(0, Math.min(255, r + shimmer));
+        g = Math.max(0, Math.min(255, g + shimmer));
+        b = Math.max(0, Math.min(255, b + shimmer * 1.5));
+      }
+
+      const i = (y * W + x) * 4;
+      d[i] = r;
+      d[i+1] = g;
+      d[i+2] = b;
+      d[i+3] = 255;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+function generate() {
+  seed = Math.random() * 10000;
+  generateHeightmap();
+  render();
+}
+
+generate();
+
+function loop() {
+  time++;
+  // Only re-render occasionally for water animation
+  if (time % 10 === 0) render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+canvas.addEventListener('click', generate);
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  waterLevel = Math.max(0.1, Math.min(0.7, waterLevel + e.deltaY * 0.001));
+  render();
+});
+</script>
+</body>
+</html>
