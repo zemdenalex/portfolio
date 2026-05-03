@@ -24,6 +24,10 @@ func (h *Handler) ListPublic(w http.ResponseWriter, r *http.Request) {
 		Search: r.URL.Query().Get("search"),
 		Type:   r.URL.Query().Get("type"),
 	}
+	if r.URL.Query().Get("featured") == "true" {
+		t := true
+		params.Featured = &t
+	}
 	if limit, err := strconv.Atoi(r.URL.Query().Get("limit")); err == nil {
 		params.Limit = limit
 	}

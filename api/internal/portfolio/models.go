@@ -111,9 +111,10 @@ type UpdateBlockRequest struct {
 }
 
 type ListParams struct {
-	Search string
-	Type   string
-	Status string
-	Limit  int
-	Offset int
+	Search   string
+	Type     string
+	Status   string
+	Featured *bool
+	Limit    int
+	Offset   int
 }

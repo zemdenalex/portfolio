@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -33,6 +34,11 @@ func (s *Service) ListPublished(ctx context.Context, params ListParams) ([]Proje
 	if params.Search != "" {
 		query += fmt.Sprintf(" AND (title_en ILIKE $%d OR title_ru ILIKE $%d OR description_en ILIKE $%d OR description_ru ILIKE $%d)", argIdx, argIdx, argIdx, argIdx)
 		args = append(args, "%"+params.Search+"%")
+		argIdx++
+	}
+	if params.Featured != nil {
+		query += fmt.Sprintf(" AND featured = $%d", argIdx)
+		args = append(args, *params.Featured)
 		argIdx++
 	}
 
@@ -400,8 +406,8 @@ func (s *Service) getBlocksByProjectID(ctx context.Context, projectID string) ([
 }
 
 type ProjectSlug struct {
-	Slug      string `json:"slug"`
-	UpdatedAt string `json:"updated_at"`
+	Slug      string    `json:"slug"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (s *Service) ListSlugs(ctx context.Context) ([]ProjectSlug, error) {
